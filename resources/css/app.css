@@ -1,0 +1,51 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* SISCO Training Color Palette */
+:root {
+    --white: #ffffffff;
+    --tufts-blue: #4c8ec5ff;
+    --picton-blue: #2daee1ff;
+    --yellow-green: #b7cf49ff;
+    --olive: #878d29ff;
+    
+    /* HSL Variants */
+    --white-hsl: hsla(0, 0%, 100%, 1);
+    --tufts-blue-hsl: hsla(207, 51%, 54%, 1);
+    --picton-blue-hsl: hsla(197, 75%, 53%, 1);
+    --yellow-green-hsl: hsla(71, 58%, 55%, 1);
+    --olive-hsl: hsla(64, 55%, 36%, 1);
+}
+
+/* Base styles for SISCO Training */
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--olive);
+}
+
+.primary-bg {
+    background-color: var(--tufts-blue);
+}
+
+.secondary-bg {
+    background-color: var(--picton-blue);
+}
+
+.accent-bg {
+    background-color: var(--yellow-green);
+}
+
+.dark-bg {
+    background-color: var(--olive);
+}
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
