@@ -27,5 +27,17 @@ class UserSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        DB::table('users')->insert([
+            'role_id' => $adminRoleId,
+            'name' => 'Jorge Antonio Mota Villa',
+            'username' => 'JorgeMota',
+            'email' => 'antonio.mota@siscoplagas.mx',
+            'password' => Hash::make('@j0rg3'),
+            'email_verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        
     }
 }

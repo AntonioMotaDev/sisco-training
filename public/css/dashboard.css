@@ -1,0 +1,66 @@
+:root {
+    --white: #ffffff;
+    --tufts-blue: #4c8ec5;
+    --picton-blue: #2daee1;
+    --yellow-green: #b7cf49;
+    --olive: #878d29;
+    --light-gray: #f8f9fa;
+    --dark-gray: #6c757d;
+    --yellow: #F6D344;
+    --red: #C54141;
+    --border-color: #dee2e6;
+}
+
+.card:hover {
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+    transform: translateY(-3px);
+}
+
+.card .btn {
+    background-color: var(--tufts-blue);
+    color: var(--white);
+}
+
+
+
+
+.tokens {
+    font-size: 10px;
+}
+
+.tokens .token-date {
+    font-size: 8px;
+    color: var(--dark-gray);
+    font-weight: 400;
+}
+
+.tokens .code {
+    width: auto;
+}
+
+.tokens .code .icon {
+    font-size: 12px;
+    color: var(--tufts-blue);
+    padding: 0;
+    margin: 0 10px; 
+    width: 2px;
+    cursor: pointer;
+}
+
+
+.tokens .code .btn {
+    font-size: 12px;
+    background-color: transparent;
+    color: var(--tufts-blue);
+    padding: 0 10px;
+    margin: 0 10px; 
+    width: 2px;
+}
+
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--olive);
+}

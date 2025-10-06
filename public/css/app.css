@@ -1,0 +1,356 @@
+:root {
+    --white: #ffffff;
+    --tufts-blue: #4c8ec5;
+    --picton-blue: #2daee1;
+    --yellow-green: #b7cf49;
+    --olive: #878d29;
+    --light-gray: #f8f9fa;
+    --dark-gray: #6c757d;
+    --border-color: #dee2e6;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto Slab', 'Rockwell', serif;
+    background-color: var(--light-gray);
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin: 1rem 0;
+}
+
+.btn {
+    display: inline-block;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 24px;
+}
+
+.btn-primary {
+    background-color: var(--tufts-blue);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background-color: var(--picton-blue);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background-color: var(--yellow-green);
+    color: var(--white);
+}
+
+.btn-secondary:hover {
+    background-color: var(--olive);
+    transform: translateY(-2px);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--tufts-blue);
+    border: 2px solid var(--tufts-blue);
+}
+
+.btn-outline:hover {
+    background-color: var(--tufts-blue);
+    color: var(--white);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--olive);
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}   
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--tufts-blue);
+    box-shadow: 0 0 0 3px rgba(76, 142, 197, 0.1);
+}
+
+.alert {
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.header {
+    background: var(--light-gray);
+    color: var(--olive);
+    padding: 0 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.logo-image {
+    height: 80px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 0.05rem;
+    align-items: center;
+    text-decoration: none;
+    color: var(--olive);
+}
+
+.nav-links a {
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.3s ease;
+}
+
+.nav-links a:hover {
+    opacity: 0.8;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 1rem 3rem;
+    background-color: var(--light-gray);
+}
+
+.footer-container img{
+    height: 100px;
+    object-fit: contain;
+}
+
+.footer-text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    color: var(--tufts-blue);
+    font-weight: 500;
+}
+
+.footer-text-container a{
+    color: var(--tufts-blue);
+    text-decoration: none;
+}
+
+.footer-text-container a:hover{
+    color: var(--yellow-green);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.social-media-container {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    padding: 1rem 0;
+}
+
+.social-media {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    color: var(--tufts-blue); 
+    font-size: 1.8rem;
+}
+
+.social-media a {
+    color: var(--tufts-blue);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.social-media a:hover {
+    color: var(--yellow-green);
+}
+
+
+.main-content {
+    min-height: calc(100vh - 100px);
+    padding: 0 0;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 1rem; }
+.mb-4 { margin-bottom: 1.5rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+.mt-4 { margin-top: 1.5rem; }
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -15px;
+}
+
+.col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding: 0 15px;
+}
+
+.col-md-4 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+    padding: 0 15px;
+}
+
+.col-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding: 0 15px;
+}
+
+@media (max-width: 768px) {
+    .col-md-6, .col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .nav-links {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}
+
+.login-container { 
+    display: flex;
+    align-items: center;
+    justify-content: between;
+    min-height: 80vh;
+    background: var(--white);
+    padding: 0 0;
+    margin: 0 0;
+    margin-bottom: 2rem;
+
+    }
+
+.login-card {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 2rem;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.login-title {
+    color: var(--tufts-blue);
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.1rem;
+}
+
+.login-subtitle {
+    color: var(--dark-gray);
+    font-size: 1rem;
+}
+
+.login-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 0.8rem;
+}
+
+.login-tab {
+    flex: 1;
+    padding: 1rem;
+    text-align: center;
+    background: none;
+    border: none;
+    color: var(--dark-gray);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login-tab.active {
+    color: var(--tufts-blue);
+    border-bottom: 3px solid var(--tufts-blue);
+}
+
+.login-tab:hover {
+    color: var(--tufts-blue);
+} 
