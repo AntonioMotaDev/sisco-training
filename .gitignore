@@ -22,3 +22,45 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Documentation and design files
+/docs/
+/GUIs/
+
+# Laravel specific
+/storage/logs/
+/storage/framework/cache/
+/storage/framework/sessions/
+/storage/framework/views/
+/bootstrap/cache/*.php
+
+# Database
+/database/database.sqlite
+*.sqlite
+*.db
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+*.swp
+*.swo
+*~
+.project
+.metadata
+.buildpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Testing
+/coverage/
+.phpunit.result.cache
+/phpunit.xml
+/tests/_output/
