@@ -41,7 +41,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/store', [CourseController::class, 'store'])->name('store');
         
         // Videos management
-        Route::get('/videos', [CourseController::class, 'videosDashboard'])->name('videos.dashboard');
+        Route::get('/videos', [CourseController::class, 'videosDashboard'])->name('videos.index');
         
         // Quizzes management
         Route::get('/quizzes', [CourseController::class, 'quizzesDashboard'])->name('quizzes.dashboard');
@@ -53,5 +53,10 @@ Route::group(['middleware' => 'auth'], function () {
         // Stats management
         Route::get('/stats', [CourseController::class, 'statsDashboard'])->name('stats.dashboard');
     });
+    
+    // Ruta temporal para probar el sidebar
+    Route::get('/test-sidebar', function () {
+        return view('sidebar-test');
+    })->name('sidebar.test');
 });
     

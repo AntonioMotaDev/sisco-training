@@ -1,7 +1,7 @@
 <header class="header bg-white shadow-sm">
     <div class="container-fluid px-4">
         <div class="d-flex justify-content-between align-items-center py-2">
-            <div class="logo">
+            <div class="logo" id="headerLogo">
                 <a href="{{ route('dashboard') }}" class="d-flex align-items-center"> 
                     <img src="{{ asset('images/logos/SISCOTRAINING-LOGO.png') }}" alt="SISCO Training" class="logo-image" style="height: 40px;">
                 </a>
@@ -54,11 +54,29 @@
 </header>
 
 <style>
+/* Header y transición del logo cuando se abre el offcanvas */
 .header {
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 1060; /* Mayor que el offcanvas (1055) */
     background: white;
+}
+
+.logo {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1050; /* Mayor que el offcanvas para que quede visible */
+    position: relative;
+}
+
+.logo.shifted {
+    transform: translateX(280px);
+}
+
+/* Solo aplicar el desplazamiento en pantallas medianas y pequeñas */
+@media (min-width: 992px) {
+    .logo.shifted {
+        transform: none;
+    }
 }
 
 .dropdown-toggle {
@@ -116,4 +134,38 @@
     }
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const logo = document.getElementById('headerLogo');
+    const offcanvasElement = document.getElementById('adminSidebarOffcanvas');
+    
+    // Solo ejecutar si ambos elementos existen (páginas admin)
+    if (offcanvasElement && logo) {
+        // Función para verificar si estamos en pantalla pequeña/mediana
+        function isSmallScreen() {
+            return window.innerWidth < 992;
+        }
+        
+        // Evento cuando se abre el offcanvas
+        offcanvasElement.addEventListener('shown.bs.offcanvas', function () {
+            if (isSmallScreen()) {
+                logo.classList.add('shifted');
+            }
+        });
+        
+        // Evento cuando se cierra el offcanvas
+        offcanvasElement.addEventListener('hidden.bs.offcanvas', function () {
+            logo.classList.remove('shifted');
+        });
+        
+        // Evento cuando se redimensiona la ventana
+        window.addEventListener('resize', function() {
+            if (!isSmallScreen()) {
+                logo.classList.remove('shifted');
+            }
+        });
+    }
+});
+</script>
 

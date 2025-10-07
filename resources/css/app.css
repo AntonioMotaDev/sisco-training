@@ -40,6 +40,109 @@ body {
     background-color: var(--olive);
 }
 
+/* Admin Sidebar Styles */
+.admin-sidebar-lg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 1030;
+    background-color: #ffffff;
+    border-right: 1px solid #dee2e6;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.sidebar-fixed {
+    height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 transparent;
+}
+
+.sidebar-fixed::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-fixed::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-fixed::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+}
+
+.sidebar-fixed::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+.sidebar-title {
+    color: var(--tufts-blue);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+    font-size: 1.1rem;
+}
+
+/* Estilos para los enlaces del sidebar */
+.admin-sidebar-lg .nav-link {
+    color: #374151;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.25rem;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.admin-sidebar-lg .nav-link:hover {
+    color: var(--tufts-blue);
+    background-color: #f3f4f6;
+    border-color: #e5e7eb;
+}
+
+.admin-sidebar-lg .nav-link.active {
+    color: #ffffff;
+    background-color: var(--tufts-blue);
+    border-color: var(--tufts-blue);
+}
+
+.admin-sidebar-lg .nav-link i {
+    width: 20px;
+    text-align: center;
+}
+
+/* Layout admin */
+.admin-layout {
+    position: relative;
+    min-height: 100vh;
+}
+
+/* Contenido principal con margen para el sidebar */
+@media (min-width: 992px) {
+    .admin-content {
+        margin-left: 280px;
+        transition: margin-left 0.3s ease;
+        min-height: 100vh;
+        position: relative;
+        z-index: 1;
+    }
+}
+
+/* Responsivo - asegurar que funcione bien en todas las pantallas */
+@media (max-width: 991.98px) {
+    .admin-content {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .admin-layout {
+        position: static;
+    }
+}
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';

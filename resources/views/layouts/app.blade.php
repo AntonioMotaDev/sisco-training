@@ -82,33 +82,34 @@
         });
     </script>
 
-<!-- <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const sidebar = document.getElementById('sidebar');
-        const openBtn = document.getElementById('sidebarOpenBtn');
-        const closeBtn = document.getElementById('sidebarCloseBtn');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebar = document.getElementById('sidebar');
+            const openBtn = document.getElementById('sidebarOpenBtn');
+            const closeBtn = document.getElementById('sidebarCloseBtn');
 
-        if (openBtn) {
-            openBtn.addEventListener('click', function () {
-                sidebar.classList.add('show');
-            });
-        }
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function () {
-                sidebar.classList.remove('show');
-            });
-        }
-        // Cierra sidebar al hacer click fuera en móvil
-        document.addEventListener('click', function (e) {
-            if (window.innerWidth < 992 && sidebar.classList.contains('show')) {
-                if (!sidebar.contains(e.target) && e.target !== openBtn) {
-                    sidebar.classList.remove('show');
-                }
+            if (openBtn) {
+                openBtn.addEventListener('click', function () {
+                    sidebar.classList.add('show');
+                });
             }
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function () {
+                    sidebar.classList.remove('show');
+                });
+            }
+            // Cierra sidebar al hacer click fuera en móvil
+            document.addEventListener('click', function (e) {
+                if (window.innerWidth < 992 && sidebar.classList.contains('show')) {
+                    if (!sidebar.contains(e.target) && e.target !== openBtn) {
+                        sidebar.classList.remove('show');
+                    }
+                }
+            });
         });
-    });
-    </script> -->
+    </script> 
 
+    <script src="{{ asset('js/admin_sidebar.js') }}"></script>
     @stack('scripts')
 </body>
-</html> 
+</html>
