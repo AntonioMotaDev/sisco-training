@@ -95,6 +95,23 @@ body {
     color: var(--white);
 }
 
+.btn-olive {
+    background-color: var(--olive);
+    color: var(--white);
+}
+.btn-olive:hover {
+    background-color: #6e7226;
+    transform: translateY(-2px);
+}
+.btn-outline-olive {
+    background-color: transparent;
+    color: var(--olive);
+}
+.btn-outline-olive:hover {
+    background-color: var(--olive);
+    color: var(--white);
+}
+
 .btn-secondary {
     background-color: var(--yellow-green);
     color: var(--white);
@@ -108,7 +125,7 @@ body {
 .btn-outline {
     background-color: transparent;
     color: var(--tufts-blue);
-    border: 2px solid var(--tufts-blue);
+    /* border: 2px solid var(--tufts-blue); */
 }
 
 .btn-outline:hover {

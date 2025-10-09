@@ -44,14 +44,6 @@ SISCO Training es un sistema de gestión de capacitaciones que permite:
 - **Tokens de acceso**: Para técnicos y clientes (duración limitada)
 - **Renovación de tokens**: Sistema automático según configuración
 
-## 👤 Credenciales por defecto
-
-**Usuario Administrador:**
-- **Usuario**: admin
-- **Contraseña**: admin123
-- **Email**: admin@siscotraining.com
-
-
 ---
 
 **SISCO Training v1.2** - Sistema desarrollado con Laravel 12 para capacitación técnica especializada.
