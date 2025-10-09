@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WebAuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\VideoController;
+use App\Http\Controllers\YouTubeController;
 
 
 // Redirect root to login
@@ -34,14 +36,24 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     
     // Course management routes
-    Route::prefix('courses')->name('courses.')->group(function () {
+    Route::prefix('admin/courses')->name('admin.courses.')->group(function () {
         Route::get('/dashboard', [CourseController::class, 'dashboard'])->name('dashboard');
         Route::get('/', [CourseController::class, 'index'])->name('index');
         Route::get('/create', [CourseController::class, 'create'])->name('create');
         Route::post('/store', [CourseController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [CourseController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [CourseController::class, 'update'])->name('update');
+        Route::delete('/{id}', [CourseController::class, 'destroy'])->name('destroy');
+        Route::get('/{id}', [CourseController::class, 'show'])->name('show');
         
-        // Videos management
-        Route::get('/videos', [CourseController::class, 'videosDashboard'])->name('videos.index');
+        // Multi-step course creation
+        Route::prefix('create')->name('create.')->group(function () {
+            Route::post('/step1', [CourseController::class, 'storeStep1'])->name('step1.store');
+            Route::get('/step2', [CourseController::class, 'createStep2'])->name('step2');
+            Route::post('/step2', [CourseController::class, 'storeStep2'])->name('step2.store');
+            Route::get('/step3', [CourseController::class, 'createStep3'])->name('step3');
+            Route::post('/finish', [CourseController::class, 'finishCreation'])->name('finish');
+        });
         
         // Quizzes management
         Route::get('/quizzes', [CourseController::class, 'quizzesDashboard'])->name('quizzes.dashboard');
@@ -53,10 +65,35 @@ Route::group(['middleware' => 'auth'], function () {
         // Stats management
         Route::get('/stats', [CourseController::class, 'statsDashboard'])->name('stats.dashboard');
     });
-    
-    // Ruta temporal para probar el sidebar
-    Route::get('/test-sidebar', function () {
-        return view('sidebar-test');
-    })->name('sidebar.test');
+
+    // Topic management routes
+    Route::prefix('topics')->name('topics.')->group(function () {
+        Route::get('/', [CourseController::class, 'topics'])->name('index');
+        Route::get('/create', [CourseController::class, 'createTopic'])->name('create');
+    });
+
+    // Video management routes
+    Route::prefix('videos')->name('videos.')->group(function () {
+        Route::get('/', [VideoController::class, 'index'])->name('index');
+        Route::get('/create', [VideoController::class, 'create'])->name('create');
+        Route::post('/store', [VideoController::class, 'store'])->name('store');
+        Route::get('/{id}', [VideoController::class, 'show'])->name('show');
+        Route::get('videos/course/{courseId}', [VideoController::class, 'videosByCourse'])->name('byCourse');
+        Route::get('/{id}/edit', [VideoController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [VideoController::class, 'update'])->name('update');
+        Route::delete('/{id}', [VideoController::class, 'destroy'])->name('destroy');
+    });
+
+    // Test management routes
+    Route::prefix('admin/tests')->name('admin.tests.')->middleware('auth')->group(function () {
+        Route::get('/create/{topic}', [\App\Http\Controllers\Admin\TestController::class, 'create'])->name('create');
+        Route::post('/store/{topic}', [\App\Http\Controllers\Admin\TestController::class, 'store'])->name('store');
+    });
+
+    // YouTube API routes
+    Route::prefix('youtube')->name('youtube.')->group(function () {
+        Route::post('/video-info', [YouTubeController::class, 'getVideoInfo'])->name('video.info');
+    });
+
 });
     

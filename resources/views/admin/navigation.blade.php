@@ -11,27 +11,27 @@
         </div>
         <ul class="nav nav-pills flex-column mb-auto gap-2">
             <li class="nav-item">
-                <a href="{{ route('courses.dashboard') }}" class="nav-link {{ request()->routeIs('courses.dashboard') ? 'active' : '' }}">
+                <a href="{{ route('admin.courses.dashboard') }}" class="nav-link {{ request()->routeIs('courses.dashboard') ? 'active' : '' }}">
                     <i class="fas fa-book me-2"></i> Cursos
                 </a>
             </li>
             <li>
-                <a href="{{ route('courses.videos.dashboard') }}" class="nav-link {{ request()->routeIs('courses.videos.dashboard') ? 'active' : '' }}">
+                <a href="{{ route('videos.index') }}" class="nav-link {{ request()->routeIs('courses.videos.dashboard') ? 'active' : '' }}">
                     <i class="fas fa-video me-2"></i> Videos
                 </a>
             </li>
             <li>
-                <a href="{{ route('courses.quizzes.dashboard') }}" class="nav-link {{ request()->routeIs('courses.tests.dashboard') ? 'active' : '' }}">
+                <a href="{{ route('admin.courses.quizzes.dashboard') }}" class="nav-link {{ request()->routeIs('courses.tests.dashboard') ? 'active' : '' }}">
                     <i class="fas fa-clipboard-list me-2"></i> Cuestionarios
                 </a>
             </li>
             <li>
-                <a href="{{ route('courses.users.index') }}" class="nav-link {{ request()->routeIs('courses.users.dashboard') ? 'active' : '' }}">
+                <a href="{{ route('admin.courses.users.index') }}" class="nav-link {{ request()->routeIs('courses.users.dashboard') ? 'active' : '' }}">
                     <i class="fas fa-users me-2"></i> Usuarios
                 </a>
             </li>
             <li>
-                <a href="{{ route('courses.stats.dashboard') }}" class="nav-link {{ request()->routeIs('courses.stats.dashboard') ? 'active' : '' }}">
+                <a href="{{ route('admin.courses.stats.dashboard') }}" class="nav-link {{ request()->routeIs('courses.stats.dashboard') ? 'active' : '' }}">
                     <i class="fas fa-chart-bar me-2"></i> Estadísticas
                 </a>
             </li>
@@ -48,27 +48,27 @@
     <div class="offcanvas-body">
         <ul class="nav nav-pills flex-column mb-auto gap-2">
                 <li class="nav-item">
-                    <a href="{{ route('courses.dashboard') }}" class="nav-link {{ request()->routeIs('courses.dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('admin.courses.dashboard') }}" class="nav-link {{ request()->routeIs('courses.dashboard') ? 'active' : '' }}">
                         <i class="fas fa-book me-2"></i> Cursos
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('courses.videos.dashboard') }}" class="nav-link {{ request()->routeIs('courses.videos.dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('videos.index') }}" class="nav-link {{ request()->routeIs('videos.index') ? 'active' : '' }}">
                         <i class="fas fa-video me-2"></i> Videos
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('courses.quizzes.dashboard') }}" class="nav-link {{ request()->routeIs('courses.tests.dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('admin.courses.quizzes.dashboard') }}" class="nav-link {{ request()->routeIs('courses.tests.dashboard') ? 'active' : '' }}">
                         <i class="fas fa-clipboard-list me-2"></i> Cuestionarios
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('courses.users.index') }}" class="nav-link {{ request()->routeIs('courses.users.dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('admin.courses.users.index') }}" class="nav-link {{ request()->routeIs('courses.users.dashboard') ? 'active' : '' }}">
                         <i class="fas fa-users me-2"></i> Usuarios
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('courses.stats.dashboard') }}" class="nav-link {{ request()->routeIs('courses.stats.dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('admin.courses.stats.dashboard') }}" class="nav-link {{ request()->routeIs('courses.stats.dashboard') ? 'active' : '' }}">
                         <i class="fas fa-chart-bar me-2"></i> Estadísticas
                     </a>
                 </li>

@@ -3,7 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use App\Models\Role;
+use App\Models\Course;
+use App\Models\Video;
+use App\Models\Topic;
+use App\Models\Test;
+use App\Models\Question;
+use App\Models\AccessToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -43,31 +50,32 @@ class WebAuthController extends Controller
     public function showDashboard()
     {
         $user = Auth::user();
-        
         if (!$user) {
             return redirect()->route('login')->with('error', 'Debe iniciar sesión para acceder al dashboard');
         }
+        if(isset($user->role_id) && $user->role_id == 1){
+            return redirect()->route('dashboard-admin')->with('error', 'No tienes permisos para acceder a este dashboard');
+        } 
 
-        $user->load('role');
-
-        return view('admin.dashboard.index', compact('user'));
+        return view('dashboard.index', compact('user'));
     }
 
     public function showDashboardAdmin()
     {
         $user = Auth::user();
-        
         if (!$user) {
             return redirect()->route('login')->with('error', 'Debe iniciar sesión para acceder al dashboard');
         }
 
-        $user->load('role');
-
-        // Check if user is admin
-        if ($user->role->name !== 'Admin') {
+        if (!isset($user->role_id) || $user->role_id != 1) {
             return redirect()->route('dashboard')->with('error', 'No tienes permisos para acceder a este dashboard');
         }
-        return view('admin.dashboard.index', compact('user'));
+
+        $courses = Course::all();
+        $videos = Video::all();
+        $tests = Test::all();
+        $currentStudents = User::where('role_id', '!=', 1)->get();
+        return view('admin.dashboard.index', compact('user', 'courses', 'videos', 'tests', 'currentStudents'));
     }
 
     /**
@@ -75,7 +83,7 @@ class WebAuthController extends Controller
      */
     public function login(Request $request)
     {
-        \Log::info('Login attempt started', ['username' => $request->username]);
+        Log::info('Login attempt started', ['username' => $request->username]);
         
         $validator = Validator::make($request->all(), [
             'username' => 'required|string',
@@ -87,7 +95,7 @@ class WebAuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            \Log::info('Validation failed', ['errors' => $validator->errors()]);
+            Log::info('Validation failed', ['errors' => $validator->errors()]);
             return back()->withErrors($validator)->withInput();
         }
 
@@ -95,31 +103,27 @@ class WebAuthController extends Controller
         
         // First attempt web guard authentication
         if (Auth::guard('web')->attempt($credentials)) {
-            \Log::info('Web authentication successful');
-            
+            Log::info('Web authentication successful');
             $user = Auth::guard('web')->user();
-            $user->load('role');
-            
-            \Log::info('User authenticated successfully', [
+            // No usar load, se asume que la relación 'role' está disponible o es null
+            Log::info('User authenticated successfully', [
                 'user_id' => $user->id,
                 'username' => $user->username,
                 'role' => $user->role ? $user->role->name : 'No role',
-                'is_admin' => $user->isAdmin(),
+                'is_admin' => (isset($user->role) && $user->role->name === 'Admin'),
                 'auth_check' => Auth::guard('web')->check(),
                 'session_id' => session()->getId()
             ]);
-
             // Generate JWT token for API usage
             try {
                 $token = JWTAuth::fromUser($user);
                 session(['jwt_token' => $token]);
-                \Log::info('JWT token generated and stored in session');
+                Log::info('JWT token generated and stored in session');
             } catch (JWTException $e) {
-                \Log::warning('Failed to generate JWT token, but continuing with web auth', [
+                Log::warning('Failed to generate JWT token, but continuing with web auth', [
                     'error' => $e->getMessage()
                 ]);
             }
-
             // Store user data in session
             session([
                 'user_data' => [
@@ -129,20 +133,17 @@ class WebAuthController extends Controller
                     'role' => $user->role->name ?? null,
                 ]
             ]);
-
             // Force session to be saved
             session()->save();
-
-            \Log::info('Session data saved', [
+            Log::info('Session data saved', [
                 'session_id' => session()->getId(),
                 'auth_check_after' => Auth::guard('web')->check()
             ]);
-
-            if ($user->isAdmin()) {
-                \Log::info('Redirecting admin to dashboard-admin');
+            if (isset($user->role_id) && $user->role_id == 1) {
+                Log::info('Redirecting admin to dashboard-admin');
                 return redirect()->intended(route('dashboard-admin'));
             } else {
-                \Log::info('Redirecting user to regular dashboard');
+                Log::info('Redirecting user to regular dashboard');
                 return redirect()->intended(route('dashboard'));
             }
         }
@@ -150,16 +151,15 @@ class WebAuthController extends Controller
         // If web authentication fails, try JWT
         try {
             if (!$token = JWTAuth::attempt($credentials)) {
-                \Log::info('All authentication attempts failed');
+                Log::info('All authentication attempts failed');
                 return back()->with('error', 'Credenciales incorrectas. Verifique su usuario y contraseña.')->withInput();
             }
         } catch (JWTException $e) {
-            \Log::error('JWT authentication error', ['error' => $e->getMessage()]);
+            Log::error('JWT authentication error', ['error' => $e->getMessage()]);
             return back()->with('error', 'Error interno del servidor. Intente nuevamente.')->withInput();
         }
-
         // If we get here, JWT auth succeeded but web auth failed (shouldn't happen)
-        \Log::warning('Unusual state: JWT auth succeeded but web auth failed');
+        Log::warning('Unusual state: JWT auth succeeded but web auth failed');
         return back()->with('error', 'Error de autenticación. Intente nuevamente.')->withInput();
     }
 

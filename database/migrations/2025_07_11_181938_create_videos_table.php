@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('videos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('topic_id')->constrained('topics');
+            $table->foreignId('topic_id')->constrained('topics')->nullable();
             $table->string('url');
             $table->string('name');
             $table->string('code')->unique()->nullable();

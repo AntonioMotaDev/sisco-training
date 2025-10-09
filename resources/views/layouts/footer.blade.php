@@ -1,4 +1,4 @@
-<footer>
+<footer class="mb-4">
     <div class="row footer-container">
         <div class="col-md-4 footer-logo-container">
             <img src="{{ asset('images/logos/SISCOPLAGAS-FOOTER-LOGO.png') }}" alt="siscoplagas.mx" class="logo-image">

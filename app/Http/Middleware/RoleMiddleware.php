@@ -24,19 +24,15 @@ class RoleMiddleware
             return response()->json([
                 'success' => false,
                 'message' => 'No autenticado'
-            ], 401);
+            ], 401)->toResponse($request);
         }
 
-        // Load role if not already loaded
-        if (!$user->relationLoaded('role')) {
-            $user->load('role');
-        }
-
-        if (!$user->hasRole($role)) {
+        // Verifica directamente la relación y el nombre del rol
+        if (!$user->role || $user->role->name !== $role) {
             return response()->json([
                 'success' => false,
                 'message' => 'Acceso denegado. Se requiere el rol: ' . $role
-            ], 403);
+            ], 403)->toResponse($request);
         }
 
         return $next($request);

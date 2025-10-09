@@ -2,80 +2,281 @@
 
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Course;
+use App\Models\Topic;
+use App\Models\Test;
+use App\Models\Question;
+use Illuminate\Support\Str;
 
 class CourseController extends Controller
 {
-    /**
-     * Display the courses dashboard
-     */
+
     public function dashboard()
-    {
+    {   
         $user = Auth::user();
-        return view('admin.courses.dashboard', compact('user'));
+        $courses = Course::all();
+        return view('admin.courses.dashboard', compact('user', 'courses'));
     }
 
     /**
-     * Display courses list
-     */
+    * Display a listing of the courses.
+    */
     public function index()
     {
         $user = Auth::user();
-        return view('admin.courses.index', compact('user'));
+        $query = Course::query();
+        if ($search = request('q')) {
+            $query->where('name', 'like', "%$search%");
+        }
+        $courses = $query->orderByDesc('created_at')->paginate(9)->withQueryString();
+        return view('admin.courses.index', compact('user', 'courses'));
     }
 
-    /**
-     * Show the form for creating a new course
-     */
+
     public function create()
     {
         $user = Auth::user();
-        return view('admin.courses.create', compact('user'));
+        // Limpiar cualquier dato de sesión anterior
+        session()->forget('course_creation');
+        return view('admin.courses.create-step1', compact('user'));
     }
 
-    /**
-     * Store a newly created course
-     */
+    public function storeStep1(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        // Guardar en sesión para el siguiente paso
+        session(['course_creation.step1' => $validated]);
+
+        return redirect()->route('admin.courses.create.step2');
+    }
+
+    public function createStep2()
+    {
+        $user = Auth::user();
+        $courseData = session('course_creation.step1');
+        if (!$courseData) {
+            return redirect()->route('admin.courses.create')
+                ->with('error', 'Debes completar el primer paso.');
+        }
+        // Obtener todos los topics existentes aprobados (o todos, según necesidad)
+        $existingTopics = Topic::orderBy('name')->get();
+        return view('admin.courses.create-step2', compact('user', 'courseData', 'existingTopics'));
+    }
+
+    public function storeStep2(Request $request)
+    {
+        $validated = $request->validate([
+            'topics' => 'required|array|min:1',
+            'topics.*.name' => 'required|string|max:255',
+            'topics.*.description' => 'nullable|string',
+        ]);
+
+        // Procesar topics y agregar order_in_course y code automáticamente
+        $processedTopics = [];
+        foreach ($validated['topics'] as $index => $topic) {
+            $processedTopics[] = [
+                'name' => $topic['name'],
+                'description' => $topic['description'] ?? '',
+                'order_in_course' => $index + 1,
+                'code' => $this->generateTopicCode($topic['name']),
+                'is_approved' => false,
+            ];
+        }
+
+        // Guardar en sesión
+        session(['course_creation.step2' => $processedTopics]);
+
+        return redirect()->route('admin.courses.create.step3');
+    }
+
+    public function createStep3()
+    {
+        $user = Auth::user();
+        $courseData = session('course_creation.step1');
+        $topicsData = session('course_creation.step2');
+        if (!$courseData || !$topicsData) {
+            return redirect()->route('admin.courses.create')
+                ->with('error', 'Debes completar los pasos anteriores.');
+        }
+
+        // Buscar tests existentes para cada topic por nombre (ya que aún no existen en BD)
+        $testsByTopicName = [];
+        foreach ($topicsData as $topic) {
+            $testsByTopicName[$topic['name']] = Test::where('name', 'like', '%' . $topic['name'] . '%')->get();
+        }
+
+        return view('admin.courses.create-step3', compact('user', 'courseData', 'topicsData', 'testsByTopicName'));
+    }
+
+    public function finishCreation(Request $request)
+    {
+        $courseData = session('course_creation.step1');
+        $topicsData = session('course_creation.step2');
+        
+        if (!$courseData || !$topicsData) {
+            return redirect()->route('admin.courses.create')
+                ->with('error', 'Sesión expirada. Intenta nuevamente.');
+        }
+
+        try {
+            // Crear el curso
+            $course = Course::create([
+                'name' => $courseData['name'],
+                'description' => $courseData['description'],
+            ]);
+
+            // Crear los topics y asociar tests seleccionados
+            foreach ($topicsData as $index => $topicData) {
+                $topic = $course->topics()->create($topicData);
+                // Asociar tests seleccionados (si los hay)
+                $selectedTestIds = $request->input("topic_{$index}_tests", []);
+                if (!empty($selectedTestIds)) {
+                    foreach ($selectedTestIds as $testId) {
+                        $test = Test::find($testId);
+                        if ($test) {
+                            $test->topic_id = $topic->id;
+                            $test->save();
+                        }
+                    }
+                }
+            }
+
+            // Limpiar sesión
+            session()->forget('course_creation');
+
+            return redirect()->route('admin.courses.index')
+                ->with('success', 'Curso creado exitosamente con ' . count($topicsData) . ' temas.');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al crear el curso: ' . $e->getMessage());
+        }
+    }
+
+    private function generateTopicCode($name)
+    {
+        // Crear un código basado en el nombre (primeras letras + número aleatorio)
+        $code = strtoupper(substr(Str::slug($name), 0, 3));
+        $code .= '-' . sprintf('%03d', rand(1, 999));
+        
+        // Verificar que no exista (opcional, para garantizar unicidad)
+        while (Topic::where('code', $code)->exists()) {
+            $code = strtoupper(substr(Str::slug($name), 0, 3)) . '-' . sprintf('%03d', rand(1, 999));
+        }
+        
+        return $code;
+    }
+   
     public function store(Request $request)
     {
-        // Logic to store course
-        return redirect()->route('admin.courses.index')->with('success', 'Curso creado exitosamente');
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'topics' => 'array',
+            'topics.*.name' => 'required_with:topics|string|max:255',
+            'topics.*.description' => 'nullable|string',
+            'topics.*.order_in_course' => 'nullable|integer',
+            'topics.*.is_approved' => 'nullable|boolean',
+            'topics.*.code' => 'nullable|string|max:50',
+        ]);
+
+        $course = Course::create([
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+        ]);
+
+        if (!empty($validated['topics'])) {
+            foreach ($validated['topics'] as $topicData) {
+                $course->topics()->create([
+                    'name' => $topicData['name'],
+                    'description' => $topicData['description'] ?? null,
+                    'order_in_course' => $topicData['order_in_course'] ?? 1,
+                    'is_approved' => $topicData['is_approved'] ?? false,
+                    'code' => $topicData['code'] ?? null,
+                ]);
+            }
+        }
+
+        return redirect()->route('admin.courses.index')->with('success', 'Curso y temas creados exitosamente');
     }
 
-    /**
-     * Display videos dashboard
-     */
-    public function videosDashboard()
+    public function show($id)
     {
         $user = Auth::user();
-        return view('admin.courses.videos.dashboard', compact('user'));
+        $course = Course::with('topics')->findOrFail($id);
+        return view('admin.courses.show', compact('user', 'course'));
     }
 
-    /**
-     * Display quizzes dashboard
-     */
-    public function quizzesDashboard()
+    public function edit($id)
     {
         $user = Auth::user();
-        return view('admin.courses.quizzes.dashboard', compact('user'));
+        $course = Course::with('topics')->findOrFail($id);
+        return view('admin.courses.edit', compact('user', 'course'));
     }
 
-    /**
-     * Show the form for creating a new quiz
-     */
-    public function createQuiz()
+    public function update(Request $request, $id)
     {
-        $user = Auth::user();
-        return view('admin.courses.quizzes.create', compact('user'));
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'topics' => 'array',
+            'topics.*.id' => 'nullable|integer|exists:topics,id',
+            'topics.*.name' => 'required_with:topics|string|max:255',
+            'topics.*.description' => 'nullable|string',
+            'topics.*.order_in_course' => 'nullable|integer',
+            'topics.*.is_approved' => 'nullable|boolean',
+            'topics.*.code' => 'nullable|string|max:50',
+        ]);
+
+        $course = Course::findOrFail($id);
+        $course->update([
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+        ]);
+
+        // Actualizar o crear topics
+        if (!empty($validated['topics'])) {
+            foreach ($validated['topics'] as $topicData) {
+                if (!empty($topicData['id'])) {
+                    // Actualizar topic existente
+                    $topic = Topic::find($topicData['id']);
+                    if ($topic && $topic->course_id == $course->id) {
+                        $topic->update([
+                            'name' => $topicData['name'],
+                            'description' => $topicData['description'] ?? null,
+                            'order_in_course' => $topicData['order_in_course'] ?? 1,
+                            'is_approved' => $topicData['is_approved'] ?? false,
+                            'code' => $topicData['code'] ?? null,
+                        ]);
+                    }
+                } else {
+                    // Crear nuevo topic
+                    $course->topics()->create([
+                        'name' => $topicData['name'],
+                        'description' => $topicData['description'] ?? null,
+                        'order_in_course' => $topicData['order_in_course'] ?? 1,
+                        'is_approved' => $topicData['is_approved'] ?? false,
+                        'code' => $topicData['code'] ?? null,
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('admin.courses.index')->with('success', 'Curso actualizado exitosamente');
     }
 
-    /**
-     * Display users management
-     */
-    public function usersManagement()
+    public function destroy($id)
     {
-        $user = Auth::user();
-        return view('admin.courses.users.index', compact('user'));
+        $course = Course::findOrFail($id);
+        $course->topics()->delete();
+        $course->delete();
+        return redirect()->route('admin.courses.index')->with('success', 'Curso y temas eliminados exitosamente');
     }
-} 
+
+}

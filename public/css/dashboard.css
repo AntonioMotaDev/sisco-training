@@ -1,14 +1,4 @@
 :root {
-    --white: #ffffff;
-    --tufts-blue: #4c8ec5;
-    --picton-blue: #2daee1;
-    --yellow-green: #b7cf49;
-    --olive: #878d29;
-    --light-gray: #f8f9fa;
-    --dark-gray: #6c757d;
-    --yellow: #F6D344;
-    --red: #C54141;
-    --border-color: #dee2e6;
 }
 
 .card:hover {
@@ -16,14 +6,6 @@
     transition: box-shadow 0.3s ease;
     transform: translateY(-3px);
 }
-
-.card .btn {
-    background-color: var(--tufts-blue);
-    color: var(--white);
-}
-
-
-
 
 .tokens {
     font-size: 10px;
@@ -105,3 +87,4 @@
 .breadcrumb-item + .breadcrumb-item::before {
     content: ">";
 }
+
