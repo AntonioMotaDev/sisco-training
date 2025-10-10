@@ -1,5 +1,5 @@
 <!-- Botón para abrir el offcanvas (solo visible en pantallas pequeñas/medianas) -->
-<button class="btn btn-primary mb-3 d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebarOffcanvas" aria-controls="adminSidebarOffcanvas">
+<button class="btn btn-primary m-4 d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebarOffcanvas" aria-controls="adminSidebarOffcanvas">
     <i class="fas fa-bars"></i> Menú
 </button>
 

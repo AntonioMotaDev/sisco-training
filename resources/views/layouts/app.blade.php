@@ -38,6 +38,7 @@
     @endif
 
     <main class="main-content">
+        @include('layouts.alerts')
         @yield('content')
     </main>
 

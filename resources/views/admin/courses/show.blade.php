@@ -27,10 +27,10 @@
                 <a href="{{ route('admin.courses.edit', $course->id) }}" class="btn btn-outline-secondary">
                     <i class="fas fa-edit me-1"></i> Editar curso
                 </a>
-                <a href="{{ route('videos.byCourse', $course->id) }}" class="btn btn-outline-primary">
+                <a href="{{ route('videos.byCourse', $course->id) }}" class="btn btn-outline">
                     <i class="fas fa-video me-1"></i> Ver videos
                 </a>
-                <a href="#" class="btn btn-outline-info">
+                <a href="#" class="btn btn-outline-olive">
                     <i class="fas fa-clipboard-list me-1"></i> Ver temas
                 </a>
             </div>
@@ -78,25 +78,64 @@
                     Temario del curso
                 </div>
                 <div class="card-body p-0">
-                    <ul class="list-group list-group-flush">
-                        @forelse($course->topics as $topic)
-                            <li class="list-group-item">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <span class="fw-semibold text-olive">{{ $topic->name }}</span>
-                                        <span class="text-muted small ms-2">{{ $topic->description }}</span>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span class="badge bg-primary-blue"><i class="fas fa-video me-1"></i> {{ $topic->videos->count() }}</span>
-                                        <span class="badge bg-info text-dark"><i class="fas fa-clipboard-list me-1"></i> {{ $topic->tests->count() }}</span>
-                                        <a href="{{ route('admin.tests.create', $topic->id) }}" class="btn btn-sm btn-outline-yellow-green" title="Crear cuestionario"><i class="fas fa-plus"></i> <small>Cuestionario</small></a>
-                                    </div>
-                                </div>
-                            </li>
-                        @empty
-                            <li class="list-group-item text-center text-muted">No hay temas registrados para este curso.</li>
-                        @endforelse
-                    </ul>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="5%">#</th>
+                                    <th width="25%">Tema</th>
+                                    <th width="40%">Descripción</th>
+                                    <th width="10%" class="text-center">Videos</th>
+                                    <th width="10%" class="text-center">Cuestionarios</th>
+                                    <th width="10%" class="text-end">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($course->topics as $index => $topic)
+                                    <tr>
+                                        <td class="text-muted fw-semibold">{{ $index + 1 }}</td>
+                                        <td>
+                                            <div class="fw-semibold text-olive">{{ $topic->name }}</div>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted">{{ $topic->description ?? 'Sin descripción' }}</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="text-primary-blue">
+                                                <i class="fas fa-video me-1"></i> {{ $topic->videos->count() }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="text-primary-blue text-dark">
+                                                <i class="fas fa-clipboard-list me-1"></i> {{ $topic->tests->count() }}
+                                            </span>
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="btn-group" role="group">
+                                                <a href="{{ route('admin.tests.index', $topic->id) }}" 
+                                                   class="btn btn-sm btn-outline" 
+                                                   title="Ver cuestionarios">
+                                                    <i class="fas fa-list"></i>
+                                                </a>
+                                                <a href="{{ route('admin.tests.create', $topic->id) }}" 
+                                                   class="btn btn-sm btn-outline-olive" 
+                                                   title="Crear cuestionario">
+                                                    <i class="fas fa-plus"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted py-4">
+                                            <i class="fas fa-book-open fa-2x mb-2 opacity-50"></i>
+                                            <div>No hay temas registrados para este curso.</div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 

@@ -86,8 +86,17 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Test management routes
     Route::prefix('admin/tests')->name('admin.tests.')->middleware('auth')->group(function () {
-        Route::get('/create/{topic}', [\App\Http\Controllers\Admin\TestController::class, 'create'])->name('create');
-        Route::post('/store/{topic}', [\App\Http\Controllers\Admin\TestController::class, 'store'])->name('store');
+    Route::get('/create/{topic}', [\App\Http\Controllers\Admin\TestController::class, 'create'])->name('create');
+    Route::post('/store/{topic}', [\App\Http\Controllers\Admin\TestController::class, 'store'])->name('store');
+
+    // Listar cuestionarios de un tema
+    Route::get('/topic/{topic}', [\App\Http\Controllers\Admin\TestController::class, 'index'])->name('index');
+    // Ver un cuestionario
+    Route::get('/{test}', [\App\Http\Controllers\Admin\TestController::class, 'show'])->name('show');
+    // Editar un cuestionario
+    Route::get('/{test}/edit', [\App\Http\Controllers\Admin\TestController::class, 'edit'])->name('edit');
+    // Actualizar un cuestionario
+    Route::put('/{test}', [\App\Http\Controllers\Admin\TestController::class, 'update'])->name('update');
     });
 
     // YouTube API routes
