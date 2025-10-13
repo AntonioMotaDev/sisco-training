@@ -26,18 +26,18 @@ class VideoController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
-        // Validar los datos del formulario
-        $validated = $request->validate(
-            [
-            'topic_id' => 'required|exists:topics,id',
+        // Si el usuario seleccionó 'Crear nuevo Tema', validamos los campos del nuevo tema
+        $isNewTopic = $request->input('topic_id') === 'newTopic';
+
+        $rules = [
+            'topic_id' => ['required'],
             'url' => 'required|string',
             'name' => 'required|string|max:255',
             'code' => 'required|string|max:255|unique:videos,code',
             'length_seconds' => 'nullable|integer|min:0',
-        ], [
+        ];
+        $messages = [
             'topic_id.required' => 'El tema es obligatorio.',
-            'topic_id.exists' => 'El tema seleccionado no es válido.',
             'url.required' => 'La URL del video es obligatoria.',
             'url.url' => 'La URL debe ser válida.',
             'url.regex' => 'La URL debe ser de YouTube (youtube.com o youtu.be).',
@@ -48,18 +48,42 @@ class VideoController extends Controller
             'code.max' => 'El código no debe exceder 255 caracteres.',
             'length_seconds.integer' => 'La duración debe ser un número entero.',
             'length_seconds.min' => 'La duración debe ser mayor o igual a 0.',
-        ]);
+        ];
+
+        if ($isNewTopic) {
+            $rules['new_topic_name'] = 'required|string|max:255';
+            $rules['new_topic_description'] = 'nullable|string';
+            unset($rules['topic_id']); // No validar exists si es nuevo
+        } else {
+            $rules['topic_id'] .= '|exists:topics,id';
+        }
+
+        $validated = $request->validate($rules, $messages);
 
         try {
-            // El código será el video ID de YouTube que viene del formulario
-            // No necesitamos generar un código automático
-            
-            // Crear el video
-            $video = Video::create($validated);
+            $topicId = $request->input('topic_id');
+            // Si es nuevo tema, crearlo primero
+            if ($isNewTopic) {
+                $topic = Topic::create([
+                    'name' => $request->input('new_topic_name'),
+                    'description' => $request->input('new_topic_description'),
+                    'is_approved' => false,
+                ]);
+                $topicId = $topic->id;
+            }
+
+            // Crear el video asociado al topic
+            $video = Video::create([
+                'topic_id' => $topicId,
+                'url' => $validated['url'],
+                'name' => $validated['name'],
+                'code' => $validated['code'],
+                'length_seconds' => $validated['length_seconds'] ?? 0,
+            ]);
 
             return redirect()
                 ->route('videos.index')
-                ->with('success', 'Video creado exitosamente: ' . $video->name);
+                ->with('success', 'Video creado exitosamente: ' . $video->name . ($isNewTopic ? ' (Nuevo tema creado: ' . $topic->name . ')' : ''));
 
         } catch (\Exception $e) {
             return redirect()

@@ -87,7 +87,7 @@
                                         @enderror
                                         <div class="form-text">
                                             <i class="fas fa-lightbulb me-1"></i>
-                                            Describe qué aprenderán los estudiantes y por qué es importante este curso.
+                                            Describe qué aprenderán y por qué es importante este curso.
                                         </div>
                                     </div>
 

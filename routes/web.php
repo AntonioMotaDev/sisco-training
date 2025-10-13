@@ -5,6 +5,8 @@ use App\Http\Controllers\WebAuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\TopicController;
+use App\Http\Controllers\Admin\TestController;
 use App\Http\Controllers\YouTubeController;
 
 
@@ -68,8 +70,15 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Topic management routes
     Route::prefix('topics')->name('topics.')->group(function () {
-        Route::get('/', [CourseController::class, 'topics'])->name('index');
-        Route::get('/create', [CourseController::class, 'createTopic'])->name('create');
+        Route::get('/', [TopicController::class, 'index'])->name('index');
+        Route::get('/create', [TopicController::class, 'create'])->name('create');
+        Route::post('/', [TopicController::class, 'store'])->name('store');
+        Route::get('/{topic}', [TopicController::class, 'show'])->name('show');
+        Route::get('/{topic}/edit', [TopicController::class, 'edit'])->name('edit');
+        Route::put('/{topic}', [TopicController::class, 'update'])->name('update');
+        Route::delete('/{topic}', [TopicController::class, 'destroy'])->name('destroy');
+        Route::patch('/{topic}/toggle-approval', [TopicController::class, 'toggleApproval'])->name('toggle-approval');
+        Route::get('/api/select-options', [TopicController::class, 'getTopicsForSelect'])->name('select-options');
     });
 
     // Video management routes
@@ -86,17 +95,13 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Test management routes
     Route::prefix('admin/tests')->name('admin.tests.')->middleware('auth')->group(function () {
-    Route::get('/create/{topic}', [\App\Http\Controllers\Admin\TestController::class, 'create'])->name('create');
-    Route::post('/store/{topic}', [\App\Http\Controllers\Admin\TestController::class, 'store'])->name('store');
-
-    // Listar cuestionarios de un tema
-    Route::get('/topic/{topic}', [\App\Http\Controllers\Admin\TestController::class, 'index'])->name('index');
-    // Ver un cuestionario
-    Route::get('/{test}', [\App\Http\Controllers\Admin\TestController::class, 'show'])->name('show');
-    // Editar un cuestionario
-    Route::get('/{test}/edit', [\App\Http\Controllers\Admin\TestController::class, 'edit'])->name('edit');
-    // Actualizar un cuestionario
-    Route::put('/{test}', [\App\Http\Controllers\Admin\TestController::class, 'update'])->name('update');
+    Route::get('/topic/{topic}', [TestController::class, 'index'])->name('index');
+    Route::get('/create/{topic}', [TestController::class, 'create'])->name('create');
+    Route::post('/store/{topic}', [TestController::class, 'store'])->name('store');
+    Route::get('/{test}', [TestController::class, 'show'])->name('show');
+    Route::get('/{test}/edit', [TestController::class, 'edit'])->name('edit');
+    Route::put('/{test}', [TestController::class, 'update'])->name('update');
+    Route::delete('/{test}', [TestController::class, 'destroy'])->name('destroy');
     });
 
     // YouTube API routes

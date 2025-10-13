@@ -11,7 +11,6 @@ use App\Models\Answer;
 
 class TestController extends Controller
 {
-    // Listar cuestionarios de un tema
     public function index($topicId)
     {
         $topic = Topic::findOrFail($topicId);
@@ -19,7 +18,6 @@ class TestController extends Controller
         return view('admin.tests.index', compact('topic', 'tests'));
     }
 
-    // Mostrar detalle de un cuestionario
     public function show($testId)
     {
         $test = Test::with(['questions.answers', 'topic'])->findOrFail($testId);
@@ -27,7 +25,6 @@ class TestController extends Controller
         return view('admin.tests.show', compact('test', 'topic'));
     }
 
-    // Mostrar formulario de edición de un cuestionario
     public function edit($testId)
     {
         $test = Test::with(['topic', 'questions.answers'])->findOrFail($testId);
@@ -35,7 +32,6 @@ class TestController extends Controller
         return view('admin.tests.edit', compact('test', 'topic'));
     }
 
-    // Actualizar un cuestionario
     public function update(Request $request, $testId)
     {
         $test = Test::findOrFail($testId);
@@ -97,14 +93,13 @@ class TestController extends Controller
         return redirect()->route('admin.tests.index', $topic->id)
             ->with('success', 'Cuestionario actualizado correctamente.');
     }
-    // Mostrar formulario de creación de test para un topic
+    
     public function create($topicId)
     {
         $topic = Topic::findOrFail($topicId);
         return view('admin.tests.create', compact('topic'));
     }
 
-    // Guardar el test y sus preguntas/respuestas
     public function store(Request $request, $topicId)
     {
         $topic = Topic::findOrFail($topicId);
@@ -157,5 +152,20 @@ class TestController extends Controller
 
         return redirect()->route('admin.courses.show', $topic->courses->first()->id ?? 1)
             ->with('success', 'Cuestionario creado correctamente.');
+    }
+
+    public function destroy($testId)
+    {
+        $test = Test::findOrFail($testId);
+        $topic = $test->topic;
+        // Eliminar preguntas y respuestas asociadas
+        $test->questions()->each(function($question) {
+            $question->answers()->delete();
+            $question->delete();
+        });
+        $test->delete();
+
+        return redirect()->route('admin.tests.index', $topic->id)
+            ->with('success', 'Cuestionario eliminado correctamente.');
     }
 }

@@ -22,7 +22,7 @@
                     </nav>
                 </div>
 
-                <div class="mb-0 d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <div class="mb-4 d-flex flex-column flex-md-row justify-content-between align-items-center">
                     <form method="GET" action="{{ route('admin.courses.index') }}" class="w-75 me-md-3 mb-2 mb-md-0">
                         <div class="input-group">
                             <input type="text" class="form-control" name="q" placeholder="Buscar cursos..." value="{{ request('q') }}">

@@ -23,24 +23,22 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="mb-3">
-                                <input type="text" class="form-control text-olive fs-4" id="name" name="name" value="{{ $test->name }}" placeholder="Nombre del cuestionario" required>
+                                <input type="text" class="form-control text-primary-blue fs-4" id="name" name="name" value="{{ $test->name }}" placeholder="Nombre del cuestionario" required>
                             </div>
                             <div class="mb-3">
                                 <textarea class="form-control" id="description" name="description" rows="2" placeholder="Descripción del cuestionario">{{ $test->description }}</textarea>
                             </div>
-                            <div class="mb-3 row align-items-end">
-                                <div class="col-md-6">
+                            <div class="mb-3 row align-items-start">
+                                <div class="col-md-4">
                                     <label for="minimum_approved_grade" class="form-label">Calificación mínima aprobatoria</label>
                                     <input type="number" min="0" step="1.0" class="form-control" id="minimum_approved_grade" name="minimum_approved_grade" value="{{ $test->minimum_approved_grade }}" required>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                            <div class="col-md-6 text-end">
-                                <label class="form-label">Valor total de preguntas</label>
-                                <div>
-                                    <span id="total-score" class="fw-bold fs-5">0</span> / 100
-                                    <span id="score-warning" class="text-danger ms-2" style="display:none;font-size:0.95em"></span>
+                                <div class="col-md-8 text-end">
+                                    <label class="form-label">Valor total de preguntas</label>
+                                    <div>
+                                        <span id="total-score" class="fw-bold fs-5">0</span> / 100
+                                        <span id="score-warning" class="text-danger ms-2" style="display:none;font-size:0.95em"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -355,8 +353,11 @@
         function updateTotalScore() {
             const total = getTotalScore();
             totalScoreSpan.textContent = total;
-            if (total !== 100) {
-                scoreWarning.textContent = 'La suma de los valores de las preguntas debe ser exactamente 100.';
+            if (total > 100) {
+                scoreWarning.textContent = 'El valor total de las preguntas se recomienda no ser mayor a 100.';
+                scoreWarning.style.display = '';
+            } else if (total !== 100) {
+                scoreWarning.textContent = 'La suma de los valores de las preguntas se recomienda ser 100.';
                 scoreWarning.style.display = '';
             } else {
                 scoreWarning.textContent = '';
@@ -419,7 +420,7 @@
         document.querySelector('form').addEventListener('submit', function(e) {
             let valid = true;
             const questionItems = questionsList.querySelectorAll('.question-item');
-            
+
             // Limpiar mensajes previos
             questionItems.forEach(qDiv => {
                 let errorMsg = qDiv.querySelector('.answer-error-msg');
@@ -434,10 +435,14 @@
                 alertElement.classList.remove('d-none');
             } else {
                 alertElement.classList.add('d-none');
-                
+
                 // Validar suma de valores
                 const total = getTotalScore();
-                if (total !== 100) {
+                if (total > 100) {
+                    valid = false;
+                    scoreWarning.textContent = 'El valor total de las preguntas no debe ser mayor a 100.';
+                    scoreWarning.style.display = '';
+                } else if (total !== 100) {
                     valid = false;
                     scoreWarning.textContent = 'La suma de los valores de las preguntas debe ser exactamente 100.';
                     scoreWarning.style.display = '';
@@ -456,7 +461,7 @@
                     answerInputs.forEach(input => { 
                         if (input.checked) anyChecked = true; 
                     });
-                    
+
                     if (!anyChecked) {
                         valid = false;
                         let errorMsg = document.createElement('div');

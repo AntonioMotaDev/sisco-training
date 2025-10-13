@@ -24,7 +24,7 @@
                             <div class="card-body">
                             <div class="mb-3">
                                 {{-- <label for="name" class="form-label">Nombre del cuestionario</label> --}}
-                                <input type="text" class="form-control text-olive fs-4" id="name" name="name" placeholder="Nombre del cuestionario" required>
+                                <input type="text" class="form-control text-primary-blue fs-4" id="name" name="name" placeholder="Nombre del cuestionario" required>
                             </div>
                             <div class="mb-3">
                                 {{-- <label for="description" class="form-label">Descripción</label> --}}
@@ -175,7 +175,7 @@
                 let helpMsg = qDiv.querySelector('.answer-help-msg');
                 if (!helpMsg) {
                     helpMsg = document.createElement('div');
-                    helpMsg.className = 'answer-help-msg text-muted mb-2 text-muted text-center';
+                    helpMsg.className = 'answer-help-msg mb-2 text-primary-blue text-center';
                     helpMsg.style.fontSize = '0.95em';
                     answersList.parentNode.insertBefore(helpMsg, answersList);
                 }

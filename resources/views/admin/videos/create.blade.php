@@ -65,8 +65,9 @@
                                 <div class="mb-3">
                                     <label for="topic_id" class="form-label">Tema del Curso <span class="text-danger">*</span></label>
                                     <select class="form-select @error('topic_id') is-invalid @enderror" id="topic_id" name="topic_id" required>
-                                        <option value="">Seleccionar tema...</option>
+                                        <option selected disabled value="">Seleccionar tema...</option>
                                         @if(isset($topics) && $topics->count() > 0)
+                                            <option value="newTopic" {{ old('topic_id') == 'newTopic' ? 'selected' : '' }}>Crear nuevo Tema</option>
                                             @foreach($topics as $topic)
                                                 <option value="{{ $topic->id }}" {{ old('topic_id') == $topic->id ? 'selected' : '' }}>
                                                     [ {{ $topic->id }} ] - {{ $topic->name }}
@@ -83,6 +84,20 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                     <div class="form-text">Selecciona el tema al que pertenece este video</div>
+                                </div>
+
+                                <!-- Campos para nuevo tema (solo visibles si se selecciona 'Crear nuevo Tema') -->
+                                <div id="newTopicFields" class="mb-3" style="display: none;">
+                                    <div class="card card-body border-primary mb-2">
+                                        <div class="mb-2">
+                                            <label for="new_topic_name" class="form-label">Nombre del nuevo tema <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="new_topic_name" name="new_topic_name" value="{{ old('new_topic_name') }}" maxlength="255">
+                                        </div>
+                                        <div>
+                                            <label for="new_topic_description" class="form-label">Descripción del nuevo tema</label>
+                                            <textarea class="form-control" id="new_topic_description" name="new_topic_description" rows="2">{{ old('new_topic_description') }}</textarea>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- URL del Video de YouTube -->
@@ -179,9 +194,7 @@
         </div>
     </div>
 </div>
-@endsection
 
-@push('styles')
 <style>
     .video-preview-container {
         position: relative;
@@ -219,11 +232,22 @@
         font-size: 0.875rem;
     }
 </style>
-@endpush
-
-@push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Mostrar/ocultar campos de nuevo tema
+    const topicSelect = document.getElementById('topic_id');
+    const newTopicFields = document.getElementById('newTopicFields');
+    function toggleNewTopicFields() {
+        if (topicSelect.value === 'newTopic') {
+            newTopicFields.style.display = '';
+            document.getElementById('new_topic_name').required = true;
+        } else {
+            newTopicFields.style.display = 'none';
+            document.getElementById('new_topic_name').required = false;
+        }
+    }
+    topicSelect.addEventListener('change', toggleNewTopicFields);
+    toggleNewTopicFields();
     const urlInput = document.getElementById('url');
     const nameInput = document.getElementById('name');
     const previewContainer = document.getElementById('videoPreview');
@@ -413,18 +437,18 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('videoForm').addEventListener('submit', function(e) {
         const url = urlInput.value.trim();
         const name = nameInput.value.trim();
-        const topicId = document.getElementById('topic_id').value;
+        const topicId = topicSelect.value;
+        const newTopicName = document.getElementById('new_topic_name').value.trim();
 
-        if (!url || !name || !topicId) {
+        let errorMsg = '';
+        if (!url) errorMsg += '- URL del video\n';
+        if (!name) errorMsg += '- Nombre del video\n';
+        if (!topicId) errorMsg += '- Tema del curso\n';
+        if (topicId === 'newTopic' && !newTopicName) errorMsg += '- Nombre del nuevo tema\n';
+
+        if (errorMsg) {
             e.preventDefault();
-            
-            // Mostrar mensaje de error
-            let errorMsg = 'Por favor, completa los siguientes campos obligatorios:\n';
-            if (!topicId) errorMsg += '- Tema del curso\n';
-            if (!url) errorMsg += '- URL del video\n';
-            if (!name) errorMsg += '- Nombre del video\n';
-            
-            alert(errorMsg);
+            alert('Por favor, completa los siguientes campos obligatorios:\n' + errorMsg);
             return false;
         }
 
@@ -439,7 +463,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Actualizar duración antes de enviar
         updateDurationSeconds();
-        
         return true;
     });
 
@@ -486,4 +509,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-@endpush
+@endsection
