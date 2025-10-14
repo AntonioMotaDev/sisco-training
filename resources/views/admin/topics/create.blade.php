@@ -26,7 +26,7 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
                         <div class="card shadow-sm">
-                            <div class="card-header bg-primary text-white">
+                            <div class="card-header bg-primary-blue text-white">
                                 <h5 class="mb-0">
                                     <i class="fas fa-book-open me-2"></i>Información del Tema
                                 </h5>
@@ -104,31 +104,10 @@
                                         @enderror
                                     </div>
 
-                                    <!-- Approval Status -->
-                                    <div class="mb-4">
-                                        <div class="form-check form-switch">
-                                            <input 
-                                                class="form-check-input" 
-                                                type="checkbox" 
-                                                id="is_approved" 
-                                                name="is_approved" 
-                                                value="1"
-                                                {{ old('is_approved') ? 'checked' : '' }}
-                                            >
-                                            <label class="form-check-label fw-medium" for="is_approved">
-                                                Aprobar tema inmediatamente
-                                            </label>
-                                        </div>
-                                        <div class="form-text">
-                                            <i class="fas fa-info-circle me-1"></i>
-                                            Los temas aprobados estarán disponibles para asignar a cursos
-                                        </div>
-                                    </div>
-
                                     <!-- Action Buttons -->
                                     <div class="d-flex gap-2 justify-content-end">
-                                        <a href="{{ route('topics.index') }}" class="btn btn-secondary">
-                                            <i class="fas fa-arrow-left me-2"></i>Cancelar
+                                        <a href="{{ route('topics.index') }}" class="btn btn-danger">
+                                            <i class="fas fa-times me-2"></i>Cancelar
                                         </a>
                                         <button type="submit" class="btn btn-primary" id="submitBtn">
                                             <i class="fas fa-save me-2"></i>Crear Tema
@@ -140,7 +119,7 @@
 
                         <!-- Help Card -->
                         <div class="card mt-4 border-info">
-                            <div class="card-header bg-info text-white">
+                            <div class="card-header bg-primary-blue text-white">
                                 <h6 class="mb-0">
                                     <i class="fas fa-lightbulb me-2"></i>Consejos para crear un buen tema
                                 </h6>
@@ -159,69 +138,50 @@
             </div>
         </div>
     </div>
-@endsection
 
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('topicForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const nameInput = document.getElementById('name');
-    const codeInput = document.getElementById('code');
-    
-    // Auto-generate code based on name if code field is empty
-    nameInput.addEventListener('input', function() {
-        if (!codeInput.value) {
-            const name = this.value;
-            if (name.length > 0) {
-                // Generate code from first 3 letters of each word
-                const words = name.split(' ');
-                let code = '';
-                words.forEach(word => {
-                    if (word.length >= 3) {
-                        code += word.substring(0, 3).toUpperCase();
-                    } else if (word.length > 0) {
-                        code += word.toUpperCase();
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('topicForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const nameInput = document.getElementById('name');
+            const codeInput = document.getElementById('code');
+            
+            // Auto-generate code based on name if code field is empty
+            nameInput.addEventListener('input', function() {
+                if (!codeInput.value) {
+                    const name = this.value;
+                    if (name.length > 0) {
+                        // Generate code from first 3 letters of each word
+                        const words = name.split(' ');
+                        let code = '';
+                        words.forEach(word => {
+                            if (word.length >= 3) {
+                                code += word.substring(0, 3).toUpperCase();
+                            } else if (word.length > 0) {
+                                code += word.toUpperCase();
+                            }
+                        });
+                        // Limit to 10 characters
+                        codeInput.placeholder = `Sugerencia: ${code.substring(0, 10)}`;
                     }
-                });
-                // Limit to 10 characters
-                codeInput.placeholder = `Sugerencia: ${code.substring(0, 10)}`;
-            }
-        }
-    });
+                }
+            });
 
-    // Form validation
-    form.addEventListener('submit', function(e) {
-        const name = nameInput.value.trim();
-        
-        if (name.length < 3) {
-            e.preventDefault();
-            showAlert('error', 'El nombre del tema debe tener al menos 3 caracteres');
-            nameInput.focus();
-            return false;
-        }
-        
-        // Disable submit button to prevent double submission
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creando...';
-    });
-});
-
-function showAlert(type, message) {
-    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
-    const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
-    
-    const alertHtml = `
-        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
-            <i class="fas ${icon} me-2"></i>${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    `;
-    
-    // Insert alert at the top of the container
-    const container = document.querySelector('.container-fluid');
-    const firstChild = container.querySelector('.d-flex');
-    firstChild.insertAdjacentHTML('beforebegin', alertHtml);
-}
-</script>
-@endpush
+            // Form validation
+            form.addEventListener('submit', function(e) {
+                const name = nameInput.value.trim();
+                
+                if (name.length < 3) {
+                    e.preventDefault();
+                    showAlert('error', 'El nombre del tema debe tener al menos 3 caracteres');
+                    nameInput.focus();
+                    return false;
+                }
+                
+                // Disable submit button to prevent double submission
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creando...';
+            });
+        });
+    </script>
+@endsection

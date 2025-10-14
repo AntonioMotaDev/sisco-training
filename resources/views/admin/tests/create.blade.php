@@ -12,7 +12,7 @@
                         <h1 class="h3 mb-0">Crear cuestionario para el tema</h1>
                         <p class="text-muted mb-0">Tema: <span class="fw-bold">{{ $topic->name }}</span></p>
                     </div>
-                    <a href="{{ route('admin.courses.show', $topic->courses->first()->id ?? 1) }}" class="btn btn-outline-secondary">
+                    <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-1"></i> Volver al curso
                     </a>
                 </div>
@@ -45,8 +45,6 @@
                             </div>
                         </div>
 
-                        </div>
-                        
                         <hr>
 
                         <div class="card">

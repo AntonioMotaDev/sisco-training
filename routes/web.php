@@ -95,13 +95,14 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Test management routes
     Route::prefix('admin/tests')->name('admin.tests.')->middleware('auth')->group(function () {
-    Route::get('/topic/{topic}', [TestController::class, 'index'])->name('index');
-    Route::get('/create/{topic}', [TestController::class, 'create'])->name('create');
-    Route::post('/store/{topic}', [TestController::class, 'store'])->name('store');
-    Route::get('/{test}', [TestController::class, 'show'])->name('show');
-    Route::get('/{test}/edit', [TestController::class, 'edit'])->name('edit');
-    Route::put('/{test}', [TestController::class, 'update'])->name('update');
-    Route::delete('/{test}', [TestController::class, 'destroy'])->name('destroy');
+        Route::get('/dashboard', [TestController::class, 'dashboard'])->name('dashboard');
+        Route::get('/topic/{topic}', [TestController::class, 'index'])->name('index');
+        Route::get('/create/{topic}', [TestController::class, 'create'])->name('create');
+        Route::post('/store/{topic}', [TestController::class, 'store'])->name('store');
+        Route::get('/{test}', [TestController::class, 'show'])->name('show');
+        Route::get('/{test}/edit', [TestController::class, 'edit'])->name('edit');
+        Route::put('/{test}', [TestController::class, 'update'])->name('update');
+        Route::delete('/{test}', [TestController::class, 'destroy'])->name('destroy');
     });
 
     // YouTube API routes

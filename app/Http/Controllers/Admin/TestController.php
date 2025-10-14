@@ -6,11 +6,18 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Test;
 use App\Models\Topic;
+use App\Models\Course;
 use App\Models\Question;
 use App\Models\Answer;
 
 class TestController extends Controller
 {
+    public function dashboard()
+    {
+        $courses = Course::all();
+        $topics = Topic::orderBy('created_at', 'desc')->paginate(10);
+        return view('admin.tests.dashboard', compact('courses', 'topics'));
+    }
     public function index($topicId)
     {
         $topic = Topic::findOrFail($topicId);

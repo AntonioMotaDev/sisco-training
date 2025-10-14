@@ -13,7 +13,7 @@
                     <h1 class="h3 mb-1">Cuestionarios</h1>
                     <p class="text-muted mb-0">Tema: <span class="fw-semibold text-primary">{{ $topic->name }}</span></p>
                 </div>
-                <a href="{{ route('admin.courses.show', $topic->id) }}" class="btn btn-outline-secondary">
+                <a href="{{ route('admin.tests.dashboard') }}" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left me-2"></i> Volver a la lista
                 </a>
             </div>

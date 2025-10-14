@@ -26,6 +26,7 @@ class VideoController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());  
         // Si el usuario seleccionó 'Crear nuevo Tema', validamos los campos del nuevo tema
         $isNewTopic = $request->input('topic_id') === 'newTopic';
 
@@ -55,7 +56,7 @@ class VideoController extends Controller
             $rules['new_topic_description'] = 'nullable|string';
             unset($rules['topic_id']); // No validar exists si es nuevo
         } else {
-            $rules['topic_id'] .= '|exists:topics,id';
+            $rules['topic_id'][] = 'exists:topics,id';
         }
 
         $validated = $request->validate($rules, $messages);

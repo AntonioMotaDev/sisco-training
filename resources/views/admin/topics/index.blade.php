@@ -1,4 +1,4 @@
-@extends('layouts.app')
+    @extends('layouts.app')
 
 @section('title', 'Gestión de Temas - SISCO Training')
 
@@ -23,42 +23,22 @@
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="mb-4 d-flex justify-content-between align-items-center">
+                <div class="mb-4 d-flex justify-content-end align-items-center">
                     <div>
                         <a href="{{ route('topics.create') }}" class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Crear Nuevo Tema
                         </a>
                     </div>
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-secondary" onclick="refreshTable()">
-                            <i class="fas fa-sync-alt me-2"></i>Actualizar
-                        </button>
-                    </div>
                 </div>
-
-                <!-- Success/Error Messages -->
-                @if(session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @if(session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i>{{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
 
                 <!-- Topics Table -->
                 <div class="card shadow-sm">
                     <div class="card-header bg-white py-3">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h6 class="m-0 font-weight-bold text-primary">
+                                <h6 class="m-0 font-weight-bold text-primary-blue">
                                     <i class="fas fa-book-open me-2"></i>Lista de Temas
-                                    <span class="badge bg-secondary ms-2">{{ $topics->total() }}</span>
+                                    <span class="text-secondary ms-2">{{ $topics->total() }}</span>
                                 </h6>
                             </div>
                         </div>
@@ -135,7 +115,7 @@
                                         <div class="text-muted">
                                             Mostrando {{ $topics->firstItem() }} a {{ $topics->lastItem() }} de {{ $topics->total() }} resultados
                                         </div>
-                                        {{ $topics->links() }}
+                                        {{ $topics->links('pagination::bootstrap-5') }}
                                     </div>
                                 </div>
                             @endif
@@ -168,11 +148,11 @@
                     <p class="text-danger"><small><i class="fas fa-exclamation-triangle me-1"></i>Esta acción no se puede deshacer.</small></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
                     <form id="deleteForm" method="POST" style="display: inline;">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger">
+                        <button type="submit" class="btn btn-primary">
                             <i class="fas fa-trash me-2"></i>Eliminar Tema
                         </button>
                     </form>

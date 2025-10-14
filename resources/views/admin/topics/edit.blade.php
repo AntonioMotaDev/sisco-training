@@ -26,7 +26,7 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
                         <div class="card shadow-sm">
-                            <div class="card-header bg-warning text-dark">
+                            <div class="card-header bg-primary-blue text-white">
                                 <h5 class="mb-0">
                                     <i class="fas fa-edit me-2"></i>Editar Tema: {{ $topic->name }}
                                 </h5>
@@ -105,36 +105,12 @@
                                         @enderror
                                     </div>
 
-                                    <!-- Approval Status -->
-                                    <div class="mb-4">
-                                        <div class="form-check form-switch">
-                                            <input 
-                                                class="form-check-input" 
-                                                type="checkbox" 
-                                                id="is_approved" 
-                                                name="is_approved" 
-                                                value="1"
-                                                {{ old('is_approved', $topic->is_approved) ? 'checked' : '' }}
-                                            >
-                                            <label class="form-check-label fw-medium" for="is_approved">
-                                                Tema aprobado
-                                            </label>
-                                        </div>
-                                        <div class="form-text">
-                                            <i class="fas fa-info-circle me-1"></i>
-                                            Los temas aprobados estarán disponibles para asignar a cursos
-                                        </div>
-                                    </div>
-
                                     <!-- Action Buttons -->
                                     <div class="d-flex gap-2 justify-content-end">
-                                        <a href="{{ route('topics.index') }}" class="btn btn-secondary">
-                                            <i class="fas fa-arrow-left me-2"></i>Cancelar
+                                        <a href="{{ route('topics.index') }}" class="btn btn-danger">
+                                            <i class="fas fa-times me-2"></i>Cancelar
                                         </a>
-                                        <a href="{{ route('topics.show', $topic) }}" class="btn btn-info">
-                                            <i class="fas fa-eye me-2"></i>Ver Detalles
-                                        </a>
-                                        <button type="submit" class="btn btn-warning" id="submitBtn">
+                                        <button type="submit" class="btn btn-primary" id="submitBtn">
                                             <i class="fas fa-save me-2"></i>Actualizar Tema
                                         </button>
                                     </div>
@@ -144,7 +120,7 @@
 
                         <!-- Topic Statistics -->
                         <div class="card mt-4 border-info">
-                            <div class="card-header bg-info text-white">
+                            <div class="card-header bg-primary-blue text-white">
                                 <h6 class="mb-0">
                                     <i class="fas fa-chart-bar me-2"></i>Estadísticas del Tema
                                 </h6>

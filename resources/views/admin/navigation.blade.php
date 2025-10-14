@@ -21,7 +21,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.courses.quizzes.dashboard') }}" class="nav-link {{ request()->routeIs('courses.tests.dashboard') ? 'active' : '' }}">
+                <a href="{{ route('admin.tests.dashboard') }}" class="nav-link {{ request()->routeIs('admin.tests.dashboard') ? 'active' : '' }}">
                     <i class="fas fa-clipboard-list me-2"></i> Cuestionarios
                 </a>
             </li>
@@ -58,7 +58,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('admin.courses.quizzes.dashboard') }}" class="nav-link {{ request()->routeIs('courses.tests.dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('admin.tests.dashboard') }}" class="nav-link {{ request()->routeIs('admin.tests.dashboard') ? 'active' : '' }}">
                         <i class="fas fa-clipboard-list me-2"></i> Cuestionarios
                     </a>
                 </li>

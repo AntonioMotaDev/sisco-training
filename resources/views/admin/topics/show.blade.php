@@ -25,7 +25,7 @@
 
                 <!-- Action Buttons -->
                 <div class="mb-4 d-flex gap-2 justify-content-end">
-                    <a href="{{ route('topics.index') }}" class="btn btn-outline-secondary">
+                    <a href="{{ url()->previous() }}" class="btn btn-outline-secondary"></a>
                         <i class="fas fa-arrow-left me-2"></i>Volver a Lista
                     </a>
                 </div>
@@ -200,15 +200,15 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <span>Cursos Asociados</span>
-                                    <span class="badge bg-primary">{{ $topic->courses->count() }}</span>
+                                    <span>{{ $topic->courses->count() }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <span>Videos</span>
-                                    <span class="badge bg-info">{{ $topic->videos->count() }}</span>
+                                    <span>{{ $topic->videos->count() }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span>Tests</span>
-                                    <span class="badge bg-warning text-dark">{{ $topic->tests->count() }}</span>
+                                    <span>{{ $topic->tests->count() }}</span>
                                 </div>
                             </div>
                         </div>
@@ -228,6 +228,9 @@
                                     <a href="{{ route('admin.tests.create', $topic) }}" class="btn btn-outline btn-sm">
                                         <i class="fas fa-book me-2"></i>Crear Cuestionario
                                     </a>
+                                    <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                        <i class="fas fa-trash me-2"></i>Eliminar Tema
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -263,45 +266,3 @@
         </div>
     </div>
 @endsection
-
-@push('scripts')
-<script>
-function toggleApproval(topicId) {
-    fetch(`/topics/${topicId}/toggle-approval`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            location.reload(); // Reload to show updated status
-        } else {
-            showAlert('error', 'Error al actualizar el estado del tema');
-        }
-    })
-    .catch(error => {
-        showAlert('error', 'Error de conexión al actualizar el tema');
-    });
-}
-
-function showAlert(type, message) {
-    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
-    const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
-    
-    const alertHtml = `
-        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
-            <i class="fas ${icon} me-2"></i>${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    `;
-    
-    // Insert alert at the top of the container
-    const container = document.querySelector('.container-fluid');
-    const firstChild = container.querySelector('.d-flex');
-    firstChild.insertAdjacentHTML('beforebegin', alertHtml);
-}
-</script>
-@endpush
