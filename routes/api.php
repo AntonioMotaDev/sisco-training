@@ -36,6 +36,13 @@ Route::group(['middleware' => ['auth:api', 'role:Admin']], function () {
     Route::get('admin/users', function () {
         return response()->json(['message' => 'Admin users endpoint']);
     });
+    
+    // Statistics API routes
+    Route::prefix('admin/stats')->group(function () {
+        Route::get('realtime', [\App\Http\Controllers\Api\StatsController::class, 'getRealtimeStats']);
+        Route::get('monthly', [\App\Http\Controllers\Api\StatsController::class, 'getMonthlyData']);
+        Route::get('performance', [\App\Http\Controllers\Api\StatsController::class, 'getPerformanceMetrics']);
+    });
 });
 
 Route::group(['middleware' => ['auth:api', 'role:Técnico']], function () {

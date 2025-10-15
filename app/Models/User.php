@@ -168,14 +168,15 @@ class User extends Authenticatable implements JWTSubject
             return ['total_tests' => 0, 'passed_tests' => 0, 'progress_percentage' => 0];
         }
 
-        $totalTests = Test::whereHas('topic', function ($query) use ($courseId) {
-            $query->where('course_id', $courseId);
+        // Filtrar tests cuyos topics pertenezcan al curso usando la relación muchos a muchos
+        $totalTests = Test::whereHas('topic.courses', function ($query) use ($courseId) {
+            $query->where('courses.id', $courseId);
         })->count();
 
         $passedTests = $this->attempts()
             ->where('passed', true)
-            ->whereHas('test.topic', function ($query) use ($courseId) {
-                $query->where('course_id', $courseId);
+            ->whereHas('test.topic.courses', function ($query) use ($courseId) {
+                $query->where('courses.id', $courseId);
             })
             ->distinct('test_id')
             ->count();

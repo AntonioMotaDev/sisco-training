@@ -1,0 +1,230 @@
+/* Estilos adicionales para el dashboard de estadísticas */
+
+.stats-dashboard-container {
+    background-color: var(--light-gray);
+    min-height: 100vh;
+}
+
+.stats-card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.stats-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.stats-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    background: linear-gradient(135deg, currentColor 0%, rgba(255,255,255,0.1) 100%);
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    margin: 20px 0;
+}
+
+.chart-container-small {
+    position: relative;
+    height: 300px;
+    margin: 15px 0;
+}
+
+.progress-custom {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #e9ecef;
+    overflow: hidden;
+}
+
+.progress-custom .progress-bar {
+    transition: width 1s ease-in-out;
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--light-gray);
+    transform: scale(1.01);
+    transition: all 0.2s ease;
+}
+
+.badge-stats {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 20px;
+}
+
+.stats-number {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--olive);
+}
+
+.stats-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.stats-subtitle {
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+}
+
+/* Animaciones para las cards */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stats-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.stats-card:nth-child(1) { animation-delay: 0.1s; }
+.stats-card:nth-child(2) { animation-delay: 0.2s; }
+.stats-card:nth-child(3) { animation-delay: 0.3s; }
+.stats-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* Responsive mejoras */
+@media (max-width: 768px) {
+    .stats-number {
+        font-size: 1.8rem;
+    }
+    
+    .stats-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+    
+    .chart-container {
+        height: 300px;
+    }
+    
+    .chart-container-small {
+        height: 250px;
+    }
+}
+
+/* Indicadores de carga */
+.loading-indicator {
+    text-align: center;
+    padding: 2rem;
+    color: var(--dark-gray);
+}
+
+.loading-indicator .spinner-border {
+    color: var(--tufts-blue);
+}
+
+/* Mejoras para las tablas */
+.table-stats {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.table-stats thead th {
+    background-color: var(--light-gray);
+    color: var(--olive);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    border: none;
+    padding: 1rem 0.75rem;
+}
+
+.table-stats tbody td {
+    padding: 0.75rem;
+    border-color: #f1f3f4;
+    vertical-align: middle;
+}
+
+/* Colores específicos para badges de rendimiento */
+.badge-success-rate-high {
+    background-color: var(--yellow-green) !important;
+    color: white;
+}
+
+.badge-success-rate-medium {
+    background-color: var(--yellow) !important;
+    color: var(--olive);
+}
+
+.badge-success-rate-low {
+    background-color: var(--red) !important;
+    color: white;
+}
+
+/* Hover effects para elementos interactivos */
+.stats-card .card-header {
+    transition: background-color 0.3s ease;
+}
+
+.stats-card:hover .card-header {
+    filter: brightness(1.1);
+}
+
+/* Gradientes personalizados para las cards principales */
+.gradient-primary {
+    background: linear-gradient(135deg, var(--tufts-blue) 0%, var(--picton-blue) 100%);
+}
+
+.gradient-success {
+    background: linear-gradient(135deg, var(--yellow-green) 0%, var(--olive) 100%);
+}
+
+.gradient-info {
+    background: linear-gradient(135deg, var(--picton-blue) 0%, var(--tufts-blue) 100%);
+}
+
+.gradient-warning {
+    background: linear-gradient(135deg, var(--yellow) 0%, #e6c043 100%);
+}
+
+/* Indicador en vivo */
+#liveIndicator {
+    animation: pulse-live 2s infinite;
+}
+
+@keyframes pulse-live {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.05);
+    }
+}
+
+/* Transiciones suaves para actualizaciones */
+.stats-number {
+    transition: all 0.3s ease;
+}
+
+.stats-card.updating {
+    border: 2px solid var(--picton-blue);
+    box-shadow: 0 0 15px rgba(45, 174, 225, 0.3);
+}

@@ -29,7 +29,7 @@
                             <tbody>
                                 @forelse($topics as $topic)
                                     <tr>
-                                        <td >
+                                        <td>
                                             <a href="{{ route('admin.tests.index', ['topic' => $topic->id]) }}" class="text-olive">{{ $topic->name }}</a>
                                         </td>
                                         <td class="text-center text-muted">

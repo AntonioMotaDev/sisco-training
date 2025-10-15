@@ -26,12 +26,12 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.courses.users.index') }}" class="nav-link {{ request()->routeIs('courses.users.dashboard') ? 'active' : '' }}">
+                <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                     <i class="fas fa-users me-2"></i> Usuarios
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.courses.stats.dashboard') }}" class="nav-link {{ request()->routeIs('courses.stats.dashboard') ? 'active' : '' }}">
+                <a href="{{ route('admin.courses.stats') }}" class="nav-link {{ request()->routeIs('admin.courses.stats') ? 'active' : '' }}">
                     <i class="fas fa-chart-bar me-2"></i> Estadísticas
                 </a>
             </li>
@@ -63,12 +63,12 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('admin.courses.users.index') }}" class="nav-link {{ request()->routeIs('courses.users.dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                         <i class="fas fa-users me-2"></i> Usuarios
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('admin.courses.stats.dashboard') }}" class="nav-link {{ request()->routeIs('courses.stats.dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('admin.courses.stats') }}" class="nav-link {{ request()->routeIs('admin.courses.stats') ? 'active' : '' }}">
                         <i class="fas fa-chart-bar me-2"></i> Estadísticas
                     </a>
                 </li>

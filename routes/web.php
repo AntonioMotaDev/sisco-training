@@ -7,6 +7,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\Admin\TestController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\YouTubeController;
 
 
@@ -40,6 +41,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Course management routes
     Route::prefix('admin/courses')->name('admin.courses.')->group(function () {
         Route::get('/dashboard', [CourseController::class, 'dashboard'])->name('dashboard');
+        Route::get('/stats', [CourseController::class, 'statsDashboard'])->name('stats');
         Route::get('/', [CourseController::class, 'index'])->name('index');
         Route::get('/create', [CourseController::class, 'create'])->name('create');
         Route::post('/store', [CourseController::class, 'store'])->name('store');
@@ -60,12 +62,6 @@ Route::group(['middleware' => 'auth'], function () {
         // Quizzes management
         Route::get('/quizzes', [CourseController::class, 'quizzesDashboard'])->name('quizzes.dashboard');
         Route::get('/quizzes/create', [CourseController::class, 'createQuiz'])->name('quizzes.create');
-        
-        // Users management
-        Route::get('/users', [CourseController::class, 'usersManagement'])->name('users.index');
-
-        // Stats management
-        Route::get('/stats', [CourseController::class, 'statsDashboard'])->name('stats.dashboard');
     });
 
     // Topic management routes
@@ -103,6 +99,20 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/{test}/edit', [TestController::class, 'edit'])->name('edit');
         Route::put('/{test}', [TestController::class, 'update'])->name('update');
         Route::delete('/{test}', [TestController::class, 'destroy'])->name('destroy');
+    });
+
+    // User management routes (Admin)
+    Route::prefix('admin/users')->name('admin.users.')->middleware('auth')->group(function () {
+        Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/create', [UserController::class, 'create'])->name('create');
+        Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::get('/{user}', [UserController::class, 'show'])->name('show');
+        Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::put('/{user}', [UserController::class, 'update'])->name('update');
+        Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+        Route::patch('/{user}/renew-token', [UserController::class, 'renewToken'])->name('renew-token');
+        Route::get('/course/{course}/users', [UserController::class, 'courseUsers'])->name('course-users');
     });
 
     // YouTube API routes

@@ -9,6 +9,9 @@ use App\Models\Course;
 use App\Models\Topic;
 use App\Models\Test;
 use App\Models\Question;
+use App\Models\Video;
+use App\Models\User;
+use App\Models\Attempt;
 use Illuminate\Support\Str;
 
 class CourseController extends Controller
@@ -277,6 +280,126 @@ class CourseController extends Controller
         $course->topics()->delete();
         $course->delete();
         return redirect()->route('admin.courses.index')->with('success', 'Curso y temas eliminados exitosamente');
+    }
+
+    /**
+     * Show the statistics dashboard
+     */
+    public function statsDashboard()
+    {
+        $user = Auth::user();
+
+        // Estadísticas generales
+        $totalCourses = Course::count();
+        $activeCourses = Course::where('is_active', true)->count();
+        $totalTopics = Topic::count();
+        $totalVideos = Video::count();
+        $totalTests = Test::count();
+        $totalQuestions = Question::count();
+        $totalUsers = User::count();
+        $totalAttempts = Attempt::count();
+        $passedAttempts = Attempt::where('passed', true)->count();
+        
+        // Estadísticas por mes (últimos 6 meses)
+        $monthlyAttempts = Attempt::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as total')
+            ->where('created_at', '>=', now()->subMonths(6))
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('total', 'month');
+
+        $monthlyUsers = User::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as total')
+            ->where('created_at', '>=', now()->subMonths(6))
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('total', 'month');
+
+        // Estadísticas por cursos
+        $courseStats = Course::with('topics')->get()->map(function ($course) {
+            $videosCount = 0;
+            $testsCount = 0;
+            $totalAttempts = 0;
+            $passedAttempts = 0;
+            
+            foreach ($course->topics as $topic) {
+                $videosCount += Video::where('topic_id', $topic->id)->count();
+                $testsCount += Test::where('topic_id', $topic->id)->count();
+                
+                $topicAttempts = Attempt::whereHas('test', function($query) use ($topic) {
+                    $query->where('topic_id', $topic->id);
+                })->count();
+                
+                $topicPassedAttempts = Attempt::whereHas('test', function($query) use ($topic) {
+                    $query->where('topic_id', $topic->id);
+                })->where('passed', true)->count();
+                
+                $totalAttempts += $topicAttempts;
+                $passedAttempts += $topicPassedAttempts;
+            }
+
+            return [
+                'name' => $course->name,
+                'topics_count' => $course->topics->count(),
+                'videos_count' => $videosCount,
+                'tests_count' => $testsCount,
+                'total_attempts' => $totalAttempts,
+                'passed_attempts' => $passedAttempts,
+                'success_rate' => $totalAttempts > 0 ? round(($passedAttempts / $totalAttempts) * 100, 2) : 0,
+            ];
+        });
+
+        // Top usuarios con más intentos exitosos
+        $topUsers = User::withCount(['passedAttempts'])
+            ->orderBy('passed_attempts_count', 'desc')
+            ->take(10)
+            ->get();
+
+        // Estadísticas por tipo de usuario
+        $usersByRole = User::join('roles', 'users.role_id', '=', 'roles.id')
+            ->selectRaw('roles.name as role_name, COUNT(*) as total')
+            ->groupBy('roles.name')
+            ->pluck('total', 'role_name');
+
+        // Tests más difíciles (menor tasa de aprobación)
+        $difficultTests = Test::with('topic')
+            ->get()
+            ->map(function($test) {
+                $attemptsCount = Attempt::where('test_id', $test->id)->count();
+                $passedAttemptsCount = Attempt::where('test_id', $test->id)->where('passed', true)->count();
+                
+                $successRate = $attemptsCount > 0 ? 
+                    round(($passedAttemptsCount / $attemptsCount) * 100, 2) : 0;
+                    
+                return [
+                    'name' => $test->name ?? $test->title ?? 'Test sin nombre',
+                    'topic' => $test->topic->name ?? 'Sin tema',
+                    'attempts' => $attemptsCount,
+                    'success_rate' => $successRate,
+                ];
+            })
+            ->filter(function($test) {
+                return $test['attempts'] > 0;
+            })
+            ->sortBy('success_rate')
+            ->take(10);
+
+        return view('admin.courses.stats-dashboard', compact(
+            'user', 
+            'totalCourses', 
+            'activeCourses',
+            'totalTopics', 
+            'totalVideos', 
+            'totalTests', 
+            'totalQuestions',
+            'totalUsers',
+            'totalAttempts',
+            'passedAttempts',
+            'monthlyAttempts',
+            'monthlyUsers', 
+            'courseStats',
+            'topUsers',
+            'usersByRole',
+            'difficultTests'
+        ));
     }
 
 }

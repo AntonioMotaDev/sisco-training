@@ -18,7 +18,9 @@ SISCO Training es un sistema de gestión de capacitaciones que permite:
 - Acceso por usuario/contraseña o tokens temporales
 - Seguimiento de progreso y calificaciones
 
-
+### Dashboard de gráficas de estadísticas.  
+![Cards de estadisticas](public/images/admin-stats_1.png)
+![Graficas de usuarios y cursos](public/images/admin-stats_2.png)
 
 ## 👥 Tipos de Usuario
 

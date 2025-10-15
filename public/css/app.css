@@ -113,12 +113,13 @@ body {
 }
 
 .btn-secondary {
-    background-color: var(--yellow-green);
+    background-color: var(--dark-gray);
     color: var(--white);
 }
 
 .btn-secondary:hover {
-    background-color: var(--olive);
+    background-color: var(--light-gray);
+    color: var(--dark-gray);
     transform: translateY(-2px);
 }
 
