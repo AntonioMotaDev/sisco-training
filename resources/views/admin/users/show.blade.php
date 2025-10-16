@@ -17,6 +17,9 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h3 class="text-muted mb-0">Detalles del Usuario</h3>
                     <div>
+                        <a href="{{ route('admin.users.enrollment', $user) }}" class="btn btn-success me-2">
+                            <i class="fas fa-user-graduate me-1"></i>Gestionar Inscripciones
+                        </a>
                         <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-1"></i>Volver
                         </a>

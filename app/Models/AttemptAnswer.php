@@ -13,6 +13,7 @@ class AttemptAnswer extends Model
     protected $fillable = [
         'attempt_id',
         'question_id',
+        'answer_id',
         'selected_answer_id',
         'free_text_answer',
         'is_correct',
@@ -135,7 +136,7 @@ class AttemptAnswer extends Model
                 $this->score_awarded = $question->score_value;
             } else {
                 $this->is_correct = false;
-                $this->score_awarded = 0.00;
+                $this->score_awarded = 0.0;
             }
         } else {
             // Para preguntas de texto libre, requiere evaluación manual

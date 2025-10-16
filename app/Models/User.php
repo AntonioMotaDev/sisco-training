@@ -8,8 +8,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use App\Models\Topic;
+use App\Models\Course;
+use App\Models\Attempt;
+use App\Models\AccessToken;
+use App\Models\Test;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -222,5 +227,39 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Topic::class)
             ->withPivot('status', 'approved_at', 'score')
             ->withTimestamps();
+    }
+
+    /**
+     * Relación muchos a muchos: cursos en los que está inscrito el usuario.
+     */
+    public function enrolledCourses()
+    {
+        return $this->belongsToMany(Course::class, 'course_user')
+            ->withPivot('enrolled_at', 'completed_at', 'progress_percentage', 'status')
+            ->withTimestamps();
+    }
+
+    /**
+     * Obtener cursos activos del usuario.
+     */
+    public function activeCourses()
+    {
+        return $this->enrolledCourses()->wherePivot('status', 'active');
+    }
+
+    /**
+     * Obtener cursos completados del usuario.
+     */
+    public function completedCourses()
+    {
+        return $this->enrolledCourses()->wherePivot('status', 'completed');
+    }
+
+    /**
+     * Verificar si el usuario está inscrito en un curso específico.
+     */
+    public function isEnrolledInCourse($courseId): bool
+    {
+        return $this->enrolledCourses()->where('courses.id', $courseId)->exists();
     }
 }

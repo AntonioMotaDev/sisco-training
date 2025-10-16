@@ -85,4 +85,30 @@ class Course extends Model
             ->count();
     }
 
+    /**
+     * Relación muchos a muchos: usuarios inscritos en este curso.
+     */
+    public function enrolledUsers()
+    {
+        return $this->belongsToMany(User::class, 'course_user')
+            ->withPivot('enrolled_at', 'completed_at', 'progress_percentage', 'status')
+            ->withTimestamps();
+    }
+
+    /**
+     * Obtener usuarios activos inscritos en el curso.
+     */
+    public function activeStudents()
+    {
+        return $this->enrolledUsers()->wherePivot('status', 'active');
+    }
+
+    /**
+     * Obtener usuarios que completaron el curso.
+     */
+    public function completedStudents()
+    {
+        return $this->enrolledUsers()->wherePivot('status', 'completed');
+    }
+
 }

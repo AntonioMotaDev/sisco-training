@@ -9,6 +9,7 @@ use App\Http\Controllers\TopicController;
 use App\Http\Controllers\Admin\TestController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\YouTubeController;
+use App\Http\Controllers\UserDashboardController;
 
 
 // Redirect root to login
@@ -113,11 +114,42 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
         Route::patch('/{user}/renew-token', [UserController::class, 'renewToken'])->name('renew-token');
         Route::get('/course/{course}/users', [UserController::class, 'courseUsers'])->name('course-users');
+        
+        // Enrollment management
+        Route::get('/{user}/enrollment', [UserController::class, 'showEnrollment'])->name('enrollment');
+        Route::post('/{user}/enroll', [UserController::class, 'enrollCourses'])->name('enroll');
+        Route::delete('/{user}/courses/{course}', [UserController::class, 'unenrollCourse'])->name('unenroll');
     });
 
     // YouTube API routes
     Route::prefix('youtube')->name('youtube.')->group(function () {
         Route::post('/video-info', [YouTubeController::class, 'getVideoInfo'])->name('video.info');
+    });
+
+    // User Dashboard routes (Técnicos y Clientes)
+    Route::prefix('user')->name('user.')->middleware('auth')->group(function () {
+        Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+        
+        // Course viewing routes
+        Route::prefix('courses')->name('courses.')->group(function () {
+            Route::get('/{course}', [UserDashboardController::class, 'showCourse'])->name('show');
+        });
+        
+        // Topic viewing routes
+        Route::prefix('courses/{course}/topics')->name('topics.')->group(function () {
+            Route::get('/{topic}', [UserDashboardController::class, 'showTopic'])->name('show');
+        });
+        
+        // Video viewing routes
+        Route::prefix('courses/{course}/topics/{topic}/videos')->name('videos.')->group(function () {
+            Route::get('/{video}', [UserDashboardController::class, 'showVideo'])->name('show');
+        });
+        
+        // Test routes
+        Route::prefix('courses/{course}/topics/{topic}/tests')->name('tests.')->group(function () {
+            Route::get('/{test}', [UserDashboardController::class, 'showTest'])->name('show');
+            Route::post('/{test}/submit', [UserDashboardController::class, 'submitTest'])->name('submit');
+        });
     });
 
 });

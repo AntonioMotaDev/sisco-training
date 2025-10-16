@@ -53,11 +53,14 @@ class WebAuthController extends Controller
         if (!$user) {
             return redirect()->route('login')->with('error', 'Debe iniciar sesión para acceder al dashboard');
         }
-        if(isset($user->role_id) && $user->role_id == 1){
-            return redirect()->route('dashboard-admin')->with('error', 'No tienes permisos para acceder a este dashboard');
-        } 
+        
+        // Redirigir según el rol del usuario
+        if ($user->role_id == 1) {
+            return redirect()->route('dashboard-admin');
+        } else {
+            return redirect()->route('user.dashboard');
+        }
 
-        return view('dashboard.index', compact('user'));
     }
 
     public function showDashboardAdmin()

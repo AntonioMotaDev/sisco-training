@@ -315,6 +315,108 @@ class UserController extends Controller
     }
 
     /**
+     * Show course enrollment view for a user
+     */
+    public function showEnrollment(User $user)
+    {
+        if ($user->isAdmin()) {
+            abort(404);
+        }
+
+        $adminUser = Auth::user();
+        
+        // Obtener todos los cursos disponibles
+        $allCourses = Course::where('is_active', true)->with('topics')->get();
+        
+        // Obtener cursos en los que ya está inscrito
+        $enrolledCourseIds = $user->enrolledCourses()->pluck('courses.id')->toArray();
+        
+        // Cursos disponibles para inscripción
+        $availableCourses = $allCourses->whereNotIn('id', $enrolledCourseIds);
+        
+        // Cursos inscritos con progreso
+        $enrolledCourses = $user->enrolledCourses()
+            ->with('topics.tests')
+            ->get()
+            ->map(function ($course) use ($user) {
+                $progress = $user->getCourseProgress($course->id);
+                $course->progress = $progress;
+                return $course;
+            });
+
+        return view('admin.users.enrollment', compact(
+            'adminUser', 'user', 'availableCourses', 'enrolledCourses'
+        ));
+    }
+
+    /**
+     * Enroll user in courses
+     */
+    public function enrollCourses(Request $request, User $user)
+    {
+        if ($user->isAdmin()) {
+            abort(404);
+        }
+
+        $request->validate([
+            'course_ids' => 'required|array|min:1',
+            'course_ids.*' => 'exists:courses,id'
+        ]);
+
+        $enrolledCount = 0;
+        $alreadyEnrolledCount = 0;
+
+        foreach ($request->course_ids as $courseId) {
+            // Verificar si ya está inscrito
+            if ($user->isEnrolledInCourse($courseId)) {
+                $alreadyEnrolledCount++;
+                continue;
+            }
+
+            // Inscribir al usuario
+            $user->enrolledCourses()->attach($courseId, [
+                'enrolled_at' => now(),
+                'status' => 'active',
+                'progress_percentage' => 0
+            ]);
+            
+            $enrolledCount++;
+        }
+
+        $message = "Se inscribió el usuario en {$enrolledCount} curso(s)";
+        if ($alreadyEnrolledCount > 0) {
+            $message .= ". {$alreadyEnrolledCount} curso(s) ya estaba(n) inscrito(s)";
+        }
+
+        return redirect()
+            ->route('admin.users.enrollment', $user)
+            ->with('success', $message);
+    }
+
+    /**
+     * Unenroll user from a course
+     */
+    public function unenrollCourse(Request $request, User $user, Course $course)
+    {
+        if ($user->isAdmin()) {
+            abort(404);
+        }
+
+        if (!$user->isEnrolledInCourse($course->id)) {
+            return redirect()
+                ->route('admin.users.enrollment', $user)
+                ->with('error', 'El usuario no está inscrito en este curso');
+        }
+
+        // Desinscribir al usuario
+        $user->enrolledCourses()->detach($course->id);
+
+        return redirect()
+            ->route('admin.users.enrollment', $user)
+            ->with('success', "Usuario desinscrito del curso '{$course->name}' exitosamente");
+    }
+
+    /**
      * Generate a unique access token.
      */
     private function generateUniqueToken(): string
