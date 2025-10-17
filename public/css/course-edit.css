@@ -1,0 +1,284 @@
+/* Estilos específicos para la edición de cursos */
+
+.topic-item {
+    transition: all 0.3s ease;
+}
+
+.topic-item:hover {
+    background-color: #f8f9fa;
+}
+
+.video-item {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.video-item:hover {
+    border-color: #dee2e6;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.remove-topic-btn, .remove-video-btn {
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.remove-topic-btn:hover, .remove-video-btn:hover {
+    opacity: 1;
+}
+
+.topic-number {
+    min-width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.videos-container {
+    min-height: 60px;
+}
+
+.no-videos-message {
+    font-style: italic;
+}
+
+/* Animaciones para elementos dinámicos */
+.topic-item.newly-added {
+    animation: slideIn 0.3s ease-out;
+}
+
+.video-item.newly-added {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Estilos para drag and drop (futuro) */
+.topic-item.dragging {
+    opacity: 0.5;
+}
+
+.drop-zone {
+    border: 2px dashed #007bff;
+    background: #f8f9ff;
+}
+
+/* Estilos para selección de temas */
+.topic-type-selector {
+    font-weight: 500;
+}
+
+.existing-topic-fields,
+.new-topic-fields {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin-top: 0.5rem;
+}
+
+.existing-topic-fields {
+    background-color: #f0f9ff;
+    border-color: #0ea5e9;
+}
+
+.new-topic-fields {
+    background-color: #f0fdf4;
+    border-color: #22c55e;
+}
+
+.existing-topic-selector {
+    font-family: monospace;
+}
+
+.existing-topic-selector option {
+    font-family: inherit;
+}
+
+/* Indicadores visuales para tipo de tema */
+.topic-item[data-topic-type="existing"] {
+    border-left: 4px solid #0ea5e9;
+}
+
+.topic-item[data-topic-type="new"] {
+    border-left: 4px solid #22c55e;
+}
+
+.topic-item[data-topic-type="existing"] .topic-number {
+    background-color: #0ea5e9 !important;
+}
+
+.topic-item[data-topic-type="new"] .topic-number {
+    background-color: #22c55e !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-content .col-lg-4,
+    .admin-content .col-lg-8 {
+        margin-bottom: 2rem;
+    }
+    
+    .d-flex.gap-2 {
+        flex-direction: column;
+        gap: 0.5rem !important;
+    }
+    
+    .video-item .row .col-md-6 {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Estados de validación mejorados */
+.is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Mejoras visuales para badges */
+.badge.bg-primary-blue {
+    background-color: #007bff !important;
+}
+
+.badge.bg-secondary {
+    background-color: #6c757d !important;
+}
+
+/* Botones de acción mejorados */
+.btn-outline-success:hover {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+/* Loading states */
+.btn.loading {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.btn.loading::after {
+    content: '';
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin-left: 0.5rem;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+    border-right-color: transparent;
+    animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Estilos específicos para funcionalidad de YouTube */
+.fetch-video-info-btn {
+    transition: all 0.3s ease;
+}
+
+.fetch-video-info-btn:hover {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    color: white;
+}
+
+.fetch-video-info-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.duration-display {
+    font-size: 0.75rem;
+    font-weight: 500;
+    min-width: 50px;
+    background-color: #f8f9fa;
+}
+
+.border-success {
+    border-color: #28a745 !important;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+}
+
+/* Indicadores de estado */
+.video-item.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.video-item.success {
+    border-color: #28a745;
+    background-color: #f8fff9;
+}
+
+.video-item.error {
+    border-color: #dc3545;
+    background-color: #fff8f8;
+}
+
+/* Animación para elementos que se actualizan automáticamente */
+.auto-filled {
+    animation: highlightSuccess 0.5s ease-out;
+}
+
+@keyframes highlightSuccess {
+    0% {
+        background-color: #d4edda;
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+/* Tooltip personalizado para duraciones */
+.duration-tooltip {
+    position: relative;
+}
+
+.duration-tooltip:hover::after {
+    content: attr(data-duration);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-size: 12px;
+    z-index: 1000;
+}

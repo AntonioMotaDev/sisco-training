@@ -119,7 +119,7 @@
                                                     <div class="col-6">
                                                         <div class="text-center">
                                                             <small class="text-muted d-block">Topics</small>
-                                                            <strong class="text-primary">{{ $course->topics->count() }}</strong>
+                                                            <strong class="text-primary">{{ $course->topicsOrdered->count() }}</strong>
                                                         </div>
                                                     </div>
                                                     <div class="col-6">

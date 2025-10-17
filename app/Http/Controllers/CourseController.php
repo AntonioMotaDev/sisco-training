@@ -212,15 +212,19 @@ class CourseController extends Controller
     public function show($id)
     {
         $user = Auth::user();
-        $course = Course::with('topics')->findOrFail($id);
+        $course = Course::with('topicsOrdered')->findOrFail($id);
         return view('admin.courses.show', compact('user', 'course'));
     }
 
     public function edit($id)
     {
         $user = Auth::user();
-        $course = Course::with('topics')->findOrFail($id);
-        return view('admin.courses.edit', compact('user', 'course'));
+        $course = Course::with(['topicsOrdered.videos', 'topicsOrdered.tests'])->findOrFail($id);
+        
+        // Obtener todos los temas existentes para la opción de seleccionar
+        $existingTopics = Topic::orderBy('name')->get();
+        
+        return view('admin.courses.edit', compact('user', 'course', 'existingTopics'));
     }
 
     public function update(Request $request, $id)
@@ -230,11 +234,27 @@ class CourseController extends Controller
             'description' => 'nullable|string',
             'topics' => 'array',
             'topics.*.id' => 'nullable|integer|exists:topics,id',
-            'topics.*.name' => 'required_with:topics|string|max:255',
+            'topics.*.existing_id' => 'nullable|integer|exists:topics,id',
+            'topics.*.name' => 'nullable|string|max:255',
             'topics.*.description' => 'nullable|string',
             'topics.*.order_in_course' => 'nullable|integer',
             'topics.*.is_approved' => 'nullable|boolean',
             'topics.*.code' => 'nullable|string|max:50',
+            'videos' => 'nullable|array',
+            'videos.*' => 'nullable|array',
+            'videos.*.*' => 'nullable|array',
+            'videos.*.*.id' => 'nullable|integer|exists:videos,id',
+            'videos.*.*.name' => 'nullable|string|max:255',
+            'videos.*.*.url' => 'nullable|string',
+            'videos.*.*.code' => 'nullable|string|max:50',
+            'videos.*.*.length_seconds' => 'nullable|integer|min:0',
+            'new_videos' => 'nullable|array',
+            'new_videos.*' => 'nullable|array',
+            'new_videos.*.*' => 'nullable|array',
+            'new_videos.*.*.name' => 'nullable|string|max:255',
+            'new_videos.*.*.url' => 'nullable|string',
+            'new_videos.*.*.code' => 'nullable|string|max:50',
+            'new_videos.*.*.length_seconds' => 'nullable|integer|min:0',
         ]);
 
         $course = Course::findOrFail($id);
@@ -243,43 +263,187 @@ class CourseController extends Controller
             'description' => $validated['description'] ?? null,
         ]);
 
+        // Obtener IDs de topics existentes en el curso
+        $existingTopicIds = $course->topics()->pluck('topics.id')->toArray();
+        $processedTopicIds = [];
+
         // Actualizar o crear topics
         if (!empty($validated['topics'])) {
-            foreach ($validated['topics'] as $topicData) {
-                if (!empty($topicData['id'])) {
+            foreach ($validated['topics'] as $index => $topicData) {
+                if (!empty($topicData['existing_id'])) {
+                    // Asociar tema existente al curso
+                    $existingTopic = Topic::find($topicData['existing_id']);
+                    if ($existingTopic) {
+                        // Verificar si ya está asociado al curso
+                        if (!$course->topics()->where('topics.id', $existingTopic->id)->exists()) {
+                            $course->topics()->attach($existingTopic->id, [
+                                'order_in_course' => $topicData['order_in_course'] ?? $index + 1
+                            ]);
+                        } else {
+                            // Solo actualizar el orden si ya está asociado
+                            $course->topics()->updateExistingPivot($existingTopic->id, [
+                                'order_in_course' => $topicData['order_in_course'] ?? $index + 1
+                            ]);
+                        }
+                        $processedTopicIds[] = $existingTopic->id;
+                    }
+                } elseif (!empty($topicData['id'])) {
                     // Actualizar topic existente
                     $topic = Topic::find($topicData['id']);
-                    if ($topic && $topic->course_id == $course->id) {
+                    if ($topic && in_array($topic->id, $existingTopicIds)) {
                         $topic->update([
                             'name' => $topicData['name'],
                             'description' => $topicData['description'] ?? null,
-                            'order_in_course' => $topicData['order_in_course'] ?? 1,
                             'is_approved' => $topicData['is_approved'] ?? false,
                             'code' => $topicData['code'] ?? null,
                         ]);
+                        
+                        // Actualizar pivot con order_in_course
+                        $course->topics()->updateExistingPivot($topic->id, [
+                            'order_in_course' => $topicData['order_in_course'] ?? $index + 1
+                        ]);
+                        
+                        $processedTopicIds[] = $topic->id;
                     }
-                } else {
+                } elseif (!empty($topicData['name'])) {
                     // Crear nuevo topic
-                    $course->topics()->create([
+                    $topic = Topic::create([
                         'name' => $topicData['name'],
                         'description' => $topicData['description'] ?? null,
-                        'order_in_course' => $topicData['order_in_course'] ?? 1,
                         'is_approved' => $topicData['is_approved'] ?? false,
-                        'code' => $topicData['code'] ?? null,
+                        'code' => $topicData['code'] ?? $this->generateTopicCode($topicData['name']),
                     ]);
+                    
+                    // Asociar el topic al curso
+                    $course->topics()->attach($topic->id, [
+                        'order_in_course' => $topicData['order_in_course'] ?? $index + 1
+                    ]);
+                    
+                    $processedTopicIds[] = $topic->id;
                 }
             }
         }
 
-        return redirect()->route('admin.courses.index')->with('success', 'Curso actualizado exitosamente');
+        // Eliminar topics que ya no están en la lista
+        $topicsToRemove = array_diff($existingTopicIds, $processedTopicIds);
+        if (!empty($topicsToRemove)) {
+            foreach ($topicsToRemove as $topicId) {
+                $topic = Topic::find($topicId);
+                if ($topic) {
+                    // Eliminar videos del topic
+                    $topic->videos()->delete();
+                    // Desasociar del curso
+                    $course->topics()->detach($topicId);
+                    // Si el topic no está asociado a otros cursos, eliminarlo
+                    if ($topic->courses()->count() == 0) {
+                        $topic->delete();
+                    }
+                }
+            }
+        }
+
+        // Procesar videos existentes
+        if (!empty($validated['videos'])) {
+            foreach ($validated['videos'] as $topicId => $videos) {
+                $topic = Topic::find($topicId);
+                if ($topic && in_array($topic->id, $processedTopicIds)) {
+                    foreach ($videos as $videoData) {
+                        // Verificar que $videoData sea un array válido con datos
+                        if (is_array($videoData) && !empty($videoData['id'])) {
+                            // Actualizar video existente
+                            $video = Video::find($videoData['id']);
+                            if ($video && $video->topic_id == $topic->id) {
+                                $video->update([
+                                    'name' => $videoData['name'] ?? '',
+                                    'url' => $videoData['url'] ?? '',
+                                    'code' => $videoData['code'] ?? '',
+                                    'length_seconds' => $videoData['length_seconds'] ?? 0,
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Procesar nuevos videos
+        if (!empty($validated['new_videos'])) {
+            foreach ($validated['new_videos'] as $topicIndex => $videos) {
+                // Buscar el topic correspondiente por índice
+                if (isset($validated['topics'][$topicIndex])) {
+                    $topicData = $validated['topics'][$topicIndex];
+                    $topic = null;
+                    
+                    if (!empty($topicData['id'])) {
+                        $topic = Topic::find($topicData['id']);
+                    } else {
+                        // Para topics nuevos, buscar por nombre recién creado
+                        $topic = Topic::where('name', $topicData['name'])
+                                     ->whereHas('courses', function($q) use ($course) {
+                                         $q->where('courses.id', $course->id);
+                                     })->first();
+                    }
+                    
+                    if ($topic && is_array($videos)) {
+                        foreach ($videos as $videoData) {
+                            // Verificar que los campos requeridos estén presentes y sean válidos
+                            if (is_array($videoData) && 
+                                (isset($videoData['name']) || isset($videoData['url'])) && 
+                                (!empty($videoData['name']) || !empty($videoData['url']))) {
+                                $topic->videos()->create([
+                                    'name' => $videoData['name'] ?? '',
+                                    'url' => $videoData['url'] ?? '',
+                                    'code' => $videoData['code'] ?? null,
+                                    'length_seconds' => $videoData['length_seconds'] ?? 0,
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return redirect()->route('admin.courses.show', $course->id)
+                        ->with('success', 'Curso actualizado exitosamente');
     }
 
     public function destroy($id)
     {
         $course = Course::findOrFail($id);
-        $course->topics()->delete();
+        
+        // Eliminar videos de todos los topics del curso
+        foreach ($course->topics as $topic) {
+            $topic->videos()->delete();
+        }
+        
+        // Desasociar topics del curso
+        $course->topics()->detach();
+        
+        // Eliminar el curso
         $course->delete();
-        return redirect()->route('admin.courses.index')->with('success', 'Curso y temas eliminados exitosamente');
+        
+        return redirect()->route('admin.courses.index')->with('success', 'Curso eliminado exitosamente');
+    }
+
+    /**
+     * Remove a video from a topic via AJAX
+     */
+    public function removeVideo($videoId)
+    {
+        try {
+            $video = Video::findOrFail($videoId);
+            $video->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Video eliminado exitosamente'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar el video: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -287,7 +451,7 @@ class CourseController extends Controller
      */
     public function statsDashboard()
     {
-        $user = Auth::user();
+        $user = Auth::user();       
 
         // Estadísticas generales
         $totalCourses = Course::count();

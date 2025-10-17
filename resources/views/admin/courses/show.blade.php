@@ -6,7 +6,7 @@
 <div class="admin-layout">
     @include('admin.navigation')
     <div class="admin-content">
-        <div class="container-fluid px-4 py-4">
+        <div class="container-fluid py-4">
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
@@ -65,7 +65,7 @@
                             <i class="fas fa-list fa-2x text-primary-blue me-3"></i>
                             <div>
                                 <div class="fw-bold">Temas</div>
-                                <div>{{ $course->topics->count() }}</div>
+                                <div>{{ $course->topicsOrdered->count() }}</div>
                             </div>
                         </div>
                     </div>
@@ -91,7 +91,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($course->topics as $index => $topic)
+                                @forelse($course->topicsOrdered as $index => $topic)
                                     <tr>
                                         <td class="text-muted fw-semibold">{{ $index + 1 }}</td>
                                         <td>
@@ -148,7 +148,7 @@
                 <div class="card-body">
                     <div class="row">
                         @php
-                            $featuredVideos = $course->topics->flatMap(fn($t) => $t->videos)->sortByDesc('created_at')->take(3);
+                            $featuredVideos = $course->topicsOrdered->flatMap(fn($t) => $t->videos)->sortByDesc('created_at')->take(3);
                         @endphp
                         @forelse($featuredVideos as $video)
                             <div class="col-md-4 mb-3">

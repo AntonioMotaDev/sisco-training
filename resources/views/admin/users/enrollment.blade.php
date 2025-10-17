@@ -60,7 +60,7 @@
                                                         <div class="d-flex justify-content-between small text-muted">
                                                             <span>
                                                                 <i class="fas fa-list me-1"></i>
-                                                                {{ $course->topics->count() }} topics
+                                                                {{ $course->topicsOrdered->count() }} topics
                                                             </span>
                                                             <span>
                                                                 <i class="fas fa-clock me-1"></i>

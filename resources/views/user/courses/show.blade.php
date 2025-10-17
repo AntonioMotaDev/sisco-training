@@ -70,15 +70,15 @@
                                 <h6 class="card-title mb-3">Información del Curso</h6>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span class="text-muted">Topics:</span>
-                                    <strong>{{ $course->topics->count() }}</strong>
+                                    <strong>{{ $course->topicsOrdered->count() }}</strong>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span class="text-muted">Videos:</span>
-                                    <strong>{{ $course->topics->sum(fn($topic) => $topic->videos->count()) }}</strong>
+                                    <strong>{{ $course->topicsOrdered->sum(fn($topic) => $topic->videos->count()) }}</strong>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span class="text-muted">Tests:</span>
-                                    <strong>{{ $course->topics->sum(fn($topic) => $topic->tests->count()) }}</strong>
+                                    <strong>{{ $course->topicsOrdered->sum(fn($topic) => $topic->tests->count()) }}</strong>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span class="text-muted">Duración estimada:</span>
@@ -98,8 +98,8 @@
                         </h5>
                     </div>
                     <div class="card-body p-0">
-                        @if($course->topics->count() > 0)
-                            @foreach($course->topics as $index => $topic)
+                        @if($course->topicsOrdered->count() > 0)
+                            @foreach($course->topicsOrdered as $index => $topic)
                                 <div class="topic-item border-bottom p-4 {{ $loop->last ? 'border-0' : '' }}">
                                     <div class="row align-items-center">
                                         <div class="col-md-8">

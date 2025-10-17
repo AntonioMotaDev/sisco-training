@@ -50,6 +50,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::put('/{id}', [CourseController::class, 'update'])->name('update');
         Route::delete('/{id}', [CourseController::class, 'destroy'])->name('destroy');
         Route::get('/{id}', [CourseController::class, 'show'])->name('show');
+        Route::delete('/videos/{videoId}', [CourseController::class, 'removeVideo'])->name('videos.remove');
         
         // Multi-step course creation
         Route::prefix('create')->name('create.')->group(function () {

@@ -22,10 +22,20 @@ class Course extends Model
      */
     public function topics()
     {
-        return $this->belongsToMany(Topic::class)
+        return $this->belongsToMany(Topic::class, 'course_topic')
+            ->withPivot('order_in_course')
+            ->withTimestamps();
+    }
+
+    /**
+     * Relación muchos a muchos: los topics de este curso ordenados.
+     */
+    public function topicsOrdered()
+    {
+        return $this->belongsToMany(Topic::class, 'course_topic')
             ->withPivot('order_in_course')
             ->withTimestamps()
-            ->orderBy('pivot_order_in_course');
+            ->orderBy('course_topic.order_in_course', 'asc');
     }
 
     /**
